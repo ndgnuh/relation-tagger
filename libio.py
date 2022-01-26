@@ -55,8 +55,9 @@ def data_to_json(row, state, field_rs):
     j['field_rs'] = field_rs
     j['text'] = list(row['img_texts'])
     j['label'] = [
-        row[REL_S_KEY].adj.astype(int).tolist(),
-        row[REL_G_KEY].adj.astype(int).tolist()]
+        row[REL_S_KEY].adj.tolist(),
+        row[REL_G_KEY].adj.tolist()]
+    print('n rel_g: ', len(row[REL_G_KEY].edges))
     j['coord'] = [bbox_to_coord(b) for b in row['img_bboxes']]
     j['vertical'] = [False for _ in (row['img_texts'])]
     if state.imgdir is not None:

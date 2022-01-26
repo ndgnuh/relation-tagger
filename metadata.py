@@ -22,7 +22,6 @@ class Menu:
 
 class Graph:
     def __init__(s, labels, texts, bboxes, adj=None):
-        print("=================")
         s.labels = [Label(label) for label in labels]
         s.tokens = [Token(text, bbox) for (text, bbox) in zip(texts, bboxes)]
         s.edges = []
@@ -86,18 +85,18 @@ class Graph:
     def adj(self):
         nlabels = len(self.labels)
         ntokens = len(self.tokens)
-        adj_tokens = np.zeros((ntokens, ntokens), dtype=bool)
-        adj_labels = np.zeros((nlabels, ntokens), dtype=bool)
+        adj_tokens = np.zeros((ntokens, ntokens), dtype=int)
+        adj_labels = np.zeros((nlabels, ntokens), dtype=int)
 
         for (i, l) in enumerate(self.labels):
             for (j, t) in enumerate(self.tokens):
                 if (l, t) in self.edges:
                     adj_labels[i, j] = True
 
-        for (i, u) in enumerate(self.labels):
-            for (j, v) in enumerate(self.labels):
+        for (i, u) in enumerate(self.tokens):
+            for (j, v) in enumerate(self.tokens):
                 if (u, v) in self.edges:
-                    adj_labels[i, j] = True
+                    adj_tokens[i, j] = True
 
         return np.concatenate([adj_labels, adj_tokens], axis=0)
 
