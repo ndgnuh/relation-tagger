@@ -14,13 +14,13 @@ REL_G_KEY = 'graph_g'
 eh = ce.EventHandler()
 
 
-def tk_dialog(dl):
+def tk_dialog(dl, **kwargs):
     root = tk.Tk()
     root.withdraw()
-    return dl()
+    return dl(**kwargs)
 
 
-def pick_file():
+def pick_file(**kwargs):
     file = tk_dialog(filedialog.askopenfile)
     if file is None:
         return file
@@ -29,7 +29,7 @@ def pick_file():
     return name
 
 
-def pick_save_file():
+def pick_save_file(**kwargs):
     file = tk_dialog(filedialog.asksaveasfile)
     if file is not None:
         name = file.name
@@ -73,7 +73,7 @@ def data_to_json(row, state, field_rs):
 
 @eh.register(ce.ACTION_IMPORT_LABELS)
 def pick_label(_):
-    label_file = pick_file()
+    label_file = pick_file(title="Pick label file")
     if label_file is None:
         ce.emit(ce.ERROR_IMPORT_LABELS, now=True)
         return
@@ -88,7 +88,7 @@ def pick_label(_):
 
 @eh.register(ce.ACTION_IMPORT_DATA)
 def pick_data(_):
-    file = pick_file()
+    file = pick_file(title="Pick data file")
     if file is None:
         ce.emit(ce.ERROR_IMPORT_DATA, now=True)
         return
@@ -128,7 +128,7 @@ def pick_img_dir(_):
 
 @eh.register(ce.REQUEST_SAVE_SESSION)
 def _(event):
-    file = pick_save_file()
+    file = pick_save_file(title="Save session")
     if file is None:
         return
 
@@ -146,7 +146,7 @@ def _(event):
 
 @eh.register(ce.ACTION_LOAD_SESSION)
 def _(event):
-    file = pick_file()
+    file = pick_file(title="Pick session file")
     if file is None:
         return
 
@@ -165,7 +165,7 @@ def export_data(event):
     if state.data is None:
         return
 
-    save_to = pick_save_file()
+    save_to = pick_save_file(title="Save jsonl")
     if save_to is None:
         return
 
