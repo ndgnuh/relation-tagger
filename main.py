@@ -329,7 +329,7 @@ def main(state):
             # QUIT
             if event.type == lc.QUIT:
                 pg.quit()
-                exit(1)
+                return
         pg.display.flip()
         clock.tick(30)
 
@@ -338,8 +338,12 @@ if __name__ == "__main__":
     pg.init()
     pg.key.set_repeat(500, 100)
     state = State()
+    from datetime import datetime
     try:
         main(state)
+        now = datetime.now().strftime('%Y%m%d%H%M')
+        with open(f"autosave-{now}.pkl", "wb") as f:
+            pickle.dump(state, f)
     except Exception:
         traceback.print_exc()
         with open("emergency.pkl", "wb") as f:
