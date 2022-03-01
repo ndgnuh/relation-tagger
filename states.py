@@ -156,6 +156,12 @@ def change_data_index(event, state):
 @eh.register(ce.SUCCESS_IMPORT_LABELS)
 def change_label(event, state):
     state.labels = event.labels
+    state.labels_rs = [label for label in state.labels_rs
+                       if label in state.labels]
+
+    for (i, row) in state.data.iterrows():
+        state.data.loc[i, REL_S_KEY].update_labels(event.labels)
+        state.data.loc[i, REL_G_KEY].update_labels(event.labels)
 
 
 @eh.register(ce.SUCCESS_IMPORT_DATA)

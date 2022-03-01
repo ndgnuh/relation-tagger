@@ -29,23 +29,19 @@ class Graph:
         if adj is None:
             return
 
-        # [print((i, t)) for (i, t) in enumerate(s.tokens)]
-
         ntext = len(texts)
         adj_text = adj[:ntext, :]
         adj_label = adj[ntext:, :]
-        # n, m = adj_text.shape
-        # for i in range(n):
-        #     for j in range(m):
-        #         if adj_text[i, j] == 1:
-        #             b1 = s.tokens[i]
-        #             b2 = s.tokens[j]
-        #             print(b1, '->', b2)
-        #             s.edges.append((b1, b2))
         for (i, j) in zip(*np.where(adj_text == 1)):
             s.edges.append((s.tokens[i], s.tokens[j]))
         for (i, j) in zip(*np.where(adj_label == 1)):
             s.edges.append((s.labels[i], s.tokens[j]))
+
+    def update_labels(self, labels):
+        self.labels = [Label(label) for label in labels]
+        self.edges = [(u, v) for (u, v) in self.edges
+                      if (u in self.labels or u in self.tokens)
+                      and (v in self.labels or v in self.tokens)]
 
     def toggle_edge(self, i, j):
         nodes = self.nodes
