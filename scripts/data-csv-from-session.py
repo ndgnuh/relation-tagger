@@ -1,7 +1,9 @@
 import os
 import pickle
 import sys
+import numpy as np
 sys.path.append(os.getcwd())
+np.set_printoptions(threshold=sys.maxsize)
 
 if len(sys.argv) < 3:
     print("USAGE:")
@@ -33,7 +35,9 @@ def default(a, b):
 
 def adj_info(i, g):
     print(f"data point: {i}")
-    return g.adj
+    s = np.array2string(g.adj, separator=',', max_line_width=90000000000)
+    s = s.replace('\n', '')
+    return s
 
 
 for c in data.columns:
@@ -54,6 +58,11 @@ print("---------- rel s -------------")
 data['rel_s'] = [adj_info(i, g)
                  for (i, g) in enumerate(data['graph_s'])]
 print("---------- save --------------")
+
+data = default(pcall(data.drop, 'graph_s', axis=1), data)
+data = default(pcall(data.drop, 'graph_g', axis=1), data)
+print('columns', data.columns)
+
 output = sys.argv[2]
 data.to_csv(output)
 print(f"File saved to {output}")
