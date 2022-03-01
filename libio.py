@@ -78,7 +78,7 @@ def pick_label(_):
         ce.emit(ce.ERROR_IMPORT_LABELS, now=True)
         return
 
-    with open(label_file) as f:
+    with open(label_file, encoding='utf8') as f:
         labels = f.readlines()
         labels = [label.replace(",", '').strip() for label in labels]
         labels = [label.replace('"', '').strip() for label in labels]
@@ -184,7 +184,7 @@ def export_data(event):
         j = json.dumps(j, ensure_ascii=False)
         jl = f"{jl}\n{j}"
 
-    with open(save_to, 'w') as f:
+    with open(save_to, 'w', encoding='utf8') as f:
         f.write(jl.strip())
 
 
