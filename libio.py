@@ -8,6 +8,7 @@ import pickle
 import json
 import cv2
 import os
+import pygame as pg
 
 REL_S_KEY = 'graph_s'
 REL_G_KEY = 'graph_g'
@@ -57,7 +58,7 @@ def data_to_json(row, state, field_rs):
     j['label'] = [
         row[REL_S_KEY].adj.tolist(),
         row[REL_G_KEY].adj.tolist()]
-    print('n rel_g: ', len(row[REL_G_KEY].edges))
+    # print('n rel_g: ', len(row[REL_G_KEY].edges))
     j['coord'] = [bbox_to_coord(b) for b in row['img_bboxes']]
     j['vertical'] = [False for _ in (row['img_texts'])]
     if state.imgdir is not None:
@@ -178,11 +179,16 @@ def export_data(event):
         if field in state.labels_rs:
             field_rs.append(field)
 
+    # STATUS UPDATE
+    old_caption, _ = pg.display.get_caption()
     jl = ""
+    n = state.data.shape[0]
     for (i, row) in state.data.iterrows():
         j = data_to_json(row, state, field_rs)
+        pg.display.set_caption(f"Dumping data {i+1}/{n}")
         j = json.dumps(j, ensure_ascii=False)
         jl = f"{jl}\n{j}"
+    pg.display.set_caption(old_caption)
 
     with open(save_to, 'w', encoding='utf8') as f:
         f.write(jl.strip())
