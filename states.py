@@ -88,12 +88,14 @@ process_event = eh.process_event
 @State.connect("data_index")
 def _(state, *args):
     if state.data is not None:
-        df = state.data
-        try:
-            print(df[REL_S_KEY][state.data_index])
-        except Exception as e:
-            print(type(e), e)
-            pass
+        return
+        # df = state.data
+        # try:
+        #     pass
+        #     print(df[REL_S_KEY][state.data_index])
+        # except Exception as e:
+        #     print(type(e), e)
+        #     pass
     ce.emit(ce.SUCCESS_CHANGE_DATAINDEX, now=True)
 
 
@@ -106,13 +108,13 @@ def _(state, *args):
         if label not in state.labels:
             state.labels_rs.remove(label)
 
-    print(state.labels_rs)
+    # print(state.labels_rs)
 
 
 @State.connect(["data", "labels"])
 def build_graph(state, *args):
     if state.data is None or state.labels is None:
-        print(state.data, state.labels)
+        # print(state.data, state.labels)
         return
     df = state.data
     labels = state.labels
@@ -268,7 +270,7 @@ def set_field_rs(event, state):
         else:
             field_rs.append(m)
 
-    print(state.labels_rs)
+    # print(state.labels_rs)
     ce.emit(ce.SUCCESS_LABEL_RS, now=True)
 
 
