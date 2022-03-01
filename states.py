@@ -181,12 +181,12 @@ def toggle_rel_s(event, state):
         return
 
     if event.fanout:
-        b1 = selection.pop(0)
-        for b2 in selection:
-            try:
+        try:
+            b1 = selection.pop(0)
+            for b2 in selection:
                 rel.toggle_edge(b1.meta, b2.meta)
-            except Exception:
-                print(f"Can't add edge {b1}, {b2}")
+        except Exception:
+            print(f"Can't add edge {b1}, {b2}")
     else:
         for (b1, b2) in zip(selection, selection[1:]):
             try:
