@@ -31,11 +31,8 @@ def pick_file(**kwargs):
 
 
 def pick_save_file(**kwargs):
-    file = tk_dialog(filedialog.asksaveasfile)
-    if file is not None:
-        name = file.name
-        file.close()
-        return name
+    name = tk_dialog(filedialog.asksaveasfilename)
+    return name
 
 
 def pick_directory():
