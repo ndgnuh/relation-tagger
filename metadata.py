@@ -29,6 +29,9 @@ class Graph:
         if adj is None:
             return
 
+        if isinstance(adj, list):
+            adj = np.array(adj)
+
         ntext = len(texts)
         adj_text = adj[:ntext, :]
         adj_label = adj[ntext:, :]
