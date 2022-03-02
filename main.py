@@ -29,8 +29,7 @@ def render(root, state):
     if state.data is not None and state.data_index is not None:
         n, _ = state.data.shape
         i = state.data_index
-        pg.display.set_caption(state.data.loc[i, 'img_id']
-                               + ' ' + f'{i+1}/{n}')
+        pg.display.set_caption(f"{state.data.loc[i, 'img_id']} {i+1}/{n}")
         row = state.data.loc[i]
         row = pickle.dumps(row)
         new_render_hash = hash((rw, rh, row))
