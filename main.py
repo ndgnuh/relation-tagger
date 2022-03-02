@@ -246,13 +246,21 @@ def render_menu(root, menu_root, state):
         onclick=ce.emit(ce.ACTION_EXPORT_JSON, state=state),
         surface=menu_root)
 
+    import_jsonl = libbuttons.Button(
+        meta=Menu("Import jsonl"),
+        text="Import jsonl",
+        height=mh,
+        onclick=ce.emit(ce.ACTION_IMPORT_JSON),
+        surface=menu_root)
+
     libbuttons.HBox([import_label,
                      import_data,
                      select_imgdir,
                      delete_record,
                      save_session,
                      load_session,
-                     export_data], 0, 0, 1).draw()
+                     export_data,
+                     import_jsonl], 0, 0, 1).draw()
 
 
 def main(state):

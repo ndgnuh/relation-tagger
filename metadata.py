@@ -21,7 +21,7 @@ class Menu:
 
 
 class Graph:
-    def __init__(s, labels, texts, bboxes, adj=None):
+    def __init__(s, labels, texts, bboxes, adj=None, text_first=True):
         s.labels = [Label(label) for label in labels]
         s.tokens = [Token(text, bbox) for (text, bbox) in zip(texts, bboxes)]
         s.edges = []
@@ -33,8 +33,16 @@ class Graph:
             adj = np.array(adj)
 
         ntext = len(texts)
-        adj_text = adj[:ntext, :]
-        adj_label = adj[ntext:, :]
+        nlabels = len(labels)
+        # If the text is placed first on the
+        # imported adjacency matrix
+        if text_first:
+            adj_text = adj[:ntext, :]
+            adj_label = adj[ntext:, :]
+        else:
+            adj_text = adj[nlabels:, :]
+            adj_label = adj[:nlabels, :]
+
         for (i, j) in zip(*np.where(adj_text == 1)):
             s.edges.append((s.tokens[i], s.tokens[j]))
         for (i, j) in zip(*np.where(adj_label == 1)):

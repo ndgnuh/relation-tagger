@@ -1,8 +1,11 @@
+from ast import literal_eval
+from metadata import Label, Token, Graph
+from pandas import DataFrame
+from utils import bbox_to_coord, hash_bboxes, coord_to_bbox
 import custom_events as ce
 import tkinter as tk
 import tkinter.filedialog as filedialog
 import pandas as pd
-from ast import literal_eval
 import traceback
 import pickle
 import json
@@ -41,12 +44,6 @@ def pick_directory():
 
 
 def data_to_json(row, state, field_rs):
-    def bbox_to_coord(b):
-        x1, x2, y1, y2 = b
-        return [[x1, y1],
-                [x2, y1],
-                [x2, y2],
-                [x1, y2]]
     j = {}
     j['data_id'] = row['img_id']
     j['fields'] = state.labels
@@ -97,9 +94,6 @@ def pick_data(_):
         ce.emit(ce.ERROR_IMPORT_DATA, error=e, now=True)
         return
 
-    def hash_bbox(bboxes):
-        return ['-'.join([str(i) for i in b]) for b in bboxes]
-
     def read_rel(rel):
         rel = rel.replace("|", ",")
         rel = literal_eval(rel)
@@ -107,7 +101,7 @@ def pick_data(_):
 
     df['img_texts'] = df['img_texts'].apply(literal_eval)
     df['img_bboxes'] = df['img_bboxes'].apply(literal_eval)
-    df['img_bbox_hashes'] = df['img_bboxes'].apply(hash_bbox)
+    df['img_bbox_hashes'] = df['img_bboxes'].apply(hash_bboxes)
     try:
         df['rel_s'] = df['rel_s'].apply(read_rel)
         df['rel_g'] = df['rel_g'].apply(read_rel)
@@ -189,6 +183,48 @@ def export_data(event):
 
     with open(save_to, 'w', encoding='utf8') as f:
         f.write(jl.strip())
+
+
+@eh.register(ce.ACTION_IMPORT_JSON)
+def import_jsonl(event):
+    file = pick_file(title="Pick jsonl file")
+
+    if file is None:
+        return
+
+    with open(file, 'r', encoding='utf8') as f:
+        data = [json.loads(s) for s in f.readlines()]
+        # ['data_id', 'fields', 'field_rs', 'text',
+        # 'label', 'coord', 'vertical', 'img_sz',
+        # 'img_feature', 'img_url'])
+        labels = data[0]['fields']
+        img_ids = [j['data_id'] for j in data]
+        img_texts = [j['text'] for j in data]
+        img_bboxes = [coord_to_bbox(j['coord'], batch=True) for j in data]
+        img_bbox_hashes = [hash_bboxes(bs) for bs in img_bboxes]
+        s_graphs = [Graph(labels=labels,
+                          bboxes=img_bbox_hashes[i],
+                          texts=img_texts[i],
+                          adj=j['label'][0],
+                          text_first=False)
+                    for (i, j) in enumerate(data)]
+        g_graphs = [Graph(labels=labels,
+                          bboxes=img_bbox_hashes[i],
+                          texts=img_texts[i],
+                          adj=j['label'][1],
+                          text_first=False)
+                    for (i, j) in enumerate(data)]
+
+    df = DataFrame({
+        'img_id': img_ids,
+        'img_texts': img_texts,
+        'img_bboxes': img_bboxes,
+        'img_bbox_hashes': img_bbox_hashes,
+        'graph_s': s_graphs,
+        'graph_g': g_graphs,
+    })
+    ce.emit(ce.SUCCESS_IMPORT_DATA, data=df, now=True)
+    ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels, now=True)
 
 
 process_event = eh.process_event
