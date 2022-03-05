@@ -198,6 +198,7 @@ def import_jsonl(event):
         # 'label', 'coord', 'vertical', 'img_sz',
         # 'img_feature', 'img_url'])
         labels = data[0]['fields']
+        labels_rs = data[0]['field_rs']
         img_ids = [j['data_id'] for j in data]
         img_texts = [j['text'] for j in data]
         img_bboxes = [coord_to_bbox(j['coord'], batch=True) for j in data]
@@ -224,7 +225,8 @@ def import_jsonl(event):
         'graph_g': g_graphs,
     })
     ce.emit(ce.SUCCESS_IMPORT_DATA, data=df, now=True)
-    ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels, now=True)
+    ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels,
+            labels_rs=labels_rs, now=True)
 
 
 process_event = eh.process_event

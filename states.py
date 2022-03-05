@@ -158,7 +158,12 @@ def change_data_index(event, state):
 @eh.register(ce.SUCCESS_IMPORT_LABELS)
 def change_label(event, state):
     state.labels = event.labels
-    state.labels_rs = [label for label in state.labels_rs
+    if hasattr(event, 'labels_rs'):
+        labels_rs = event.labels_rs
+    else:
+        labels_rs = state.labels_rs
+
+    state.labels_rs = [label for label in labels_rs
                        if label in state.labels]
 
     for (i, row) in state.data.iterrows():
