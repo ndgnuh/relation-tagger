@@ -21,11 +21,12 @@ def hash_bboxes(bboxes):
     bboxes: list
         list of bounding boxes
     """
-    def hash_single_bbox(bbox):
-        if detect_bbox_format(bbox) == FOUR_COORD_FORMAT:
-            bbox = coord_to_bbox(bbox)
-        return '-'.join([str(i) for i in bbox])
-    return [hash_single_bbox(b) for b in bboxes]
+    return [b.hash for b in bboxes]
+    # def hash_single_bbox(bbox):
+    #     if detect_bbox_format(bbox) == FOUR_COORD_FORMAT:
+    #         bbox = coord_to_bbox(bbox)
+    #     return '-'.join([str(i) for i in bbox])
+    # return [hash_single_bbox(b) for b in bboxes]
 
 
 def bbox_to_coord(b):
@@ -52,10 +53,10 @@ def coord_to_bbox(coords, batch=False):
 
 def arrange_bbox(bboxes):
     n = len(bboxes)
-    xcentres = [(b[0] + b[1]) // 2 for b in bboxes]
-    ycentres = [(b[2] + b[3]) // 2 for b in bboxes]
-    heights = [abs(b[2] - b[3]) for b in bboxes]
-    width = [abs(b[1] - b[0]) for b in bboxes]
+    xcentres = [b.center_x for b in bboxes]
+    ycentres = [b.center_y for b in bboxes]
+    heights = [b.height for b in bboxes]
+    width = [b.width for b in bboxes]
 
     def is_top_to(i, j):
         result = (ycentres[j] - ycentres[i]) > ((heights[i] + heights[j]) / 3)

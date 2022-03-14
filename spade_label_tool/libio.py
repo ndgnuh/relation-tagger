@@ -1,5 +1,5 @@
 from ast import literal_eval
-from spade_label_tool.metadata import Label, Token, Graph
+from spade_label_tool.metadata import Label, Token, Graph, BBox
 from spade_label_tool import custom_events as ce
 from spade_label_tool.utils import bbox_to_coord, hash_bboxes, coord_to_bbox
 from pandas import DataFrame
@@ -100,7 +100,7 @@ def pick_data(_):
         return rel
 
     df['img_texts'] = df['img_texts'].apply(literal_eval)
-    df['img_bboxes'] = df['img_bboxes'].apply(literal_eval)
+    df['img_bboxes'] = df['img_bboxes'].apply(literal_eval).apply(BBox)
     df['img_bbox_hashes'] = df['img_bboxes'].apply(hash_bboxes)
     try:
         df['rel_s'] = df['rel_s'].apply(read_rel)
@@ -201,7 +201,7 @@ def import_jsonl(event):
         labels_rs = data[0]['field_rs']
         img_ids = [j['data_id'] for j in data]
         img_texts = [j['text'] for j in data]
-        img_bboxes = [coord_to_bbox(j['coord'], batch=True) for j in data]
+        img_bboxes = [[BBox(b) for b in j['coord']] for j in data]
         img_bbox_hashes = [hash_bboxes(bs) for bs in img_bboxes]
         s_graphs = [Graph(labels=labels,
                           bboxes=img_bbox_hashes[i],

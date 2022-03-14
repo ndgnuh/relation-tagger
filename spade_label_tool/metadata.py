@@ -1,6 +1,13 @@
 import numpy as np
+import functools as ft
 from dataclasses import dataclass
 from typing import List, Callable, Optional
+
+# COMPAT
+if hasattr(ft, 'cache'):
+    cache = ft.cache
+else:
+    cache = ft.lru_cache
 
 
 @dataclass(frozen=True, order=True)
@@ -18,6 +25,78 @@ class Token:
 class Menu:
     text: str
     function: Optional[Callable] = None
+
+
+class BBox:
+    TWO_CORNERS = 0
+    POLYGON = 1
+    """
+    The interface for bounding box, support two format
+    - Four corner: [x1, x2, y1, y2]
+    - Polygon: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+    """
+
+    def __init__(self, bbox):
+        self.bbox = bbox
+
+    @property
+    @cache
+    def kind(self):
+        if isinstance(self.bbox[0], (int, float)):
+            return BBox.TWO_CORNERS
+        else:
+            return BBox.POLYGON
+
+    @property
+    @cache
+    def xy(self):
+        if self.kind == BBox.TWO_CORNERS:
+            return self.bbox
+        else:
+            # Not really accurate
+            # but this is only needed for displaying, so...
+            x = [pt[0] for pt in self.bbox]
+            y = [pt[1] for pt in self.bbox]
+            x1 = min(x)
+            x2 = max(x)
+            y1 = min(y)
+            y2 = max(y)
+            return x1, x2, y1, y2
+
+    @property
+    @cache
+    def center(self):
+        x1, x2, y1, y2 = self.xy
+        return (x1 + x2) / 2, (y1 + y2) / 2
+
+    @property
+    @cache
+    def center_x(self):
+        x1, x2, y1, y2 = self.xy
+        return (x1 + x2) / 2
+
+    @property
+    @cache
+    def center_y(self):
+        x1, x2, y1, y2 = self.xy
+        return (y1 + y2) / 2
+
+    @property
+    @cache
+    def width(self):
+        x1, x2, y1, y2 = self.xy
+        return x1 - x2
+
+    @property
+    @cache
+    def height(self):
+        x1, x2, y1, y2 = self.xy
+        return y2 - y1
+
+    @property
+    @cache
+    def hash(self):
+        return '-'.join(map(str, self.xy))
 
 
 class Graph:
