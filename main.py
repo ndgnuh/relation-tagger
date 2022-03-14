@@ -329,9 +329,15 @@ def main(state):
                             selection=libbuttons.Button.selection,
                             now=True)
                 if event.key == lc.K_c:
-                    ce.emit(ce.ACTION_LABEL_RS,
-                            selection=libbuttons.Button.selection,
-                            now=True)
+                    copy = pg.key.get_mods() & lc.KMOD_CTRL
+                    if copy:
+                        ce.emit(ce.ACTION_COPY,
+                                selection=libbuttons.Button.selection,
+                                now=True)
+                    else:
+                        ce.emit(ce.ACTION_LABEL_RS,
+                                selection=libbuttons.Button.selection,
+                                now=True)
 
             # QUIT
             if event.type == lc.QUIT:

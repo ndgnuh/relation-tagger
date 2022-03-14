@@ -1,3 +1,4 @@
+import pyperclip
 from dataclasses import dataclass, field, fields
 import pandas as pd
 from typing import Union, List, Callable, Optional
@@ -289,3 +290,11 @@ def delete_record(event, state):
     state.data = df
 
     ce.emit(ce.ACTION_CHANGE_DATAINDEX, offset=0, now=True)
+
+
+@eh.register(ce.ACTION_COPY)
+def copy_text(event, state):
+    texts = [b.text for b in event.selection]
+    texts = ' '.join(texts)
+    pyperclip.copy(texts)
+    ce.emit(ce.SUCCESS_REL_S, now=True)

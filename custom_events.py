@@ -46,6 +46,8 @@ signals = [
     "SUCCESS_EXPORT_JSON",
     # DELETE RECORD
     "ACTION_DELETE_RECORD",
+    # COPY TEXT TO CLIPBOARD
+    "ACTION_COPY"
 ]
 
 for signal in signals:
