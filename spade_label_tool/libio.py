@@ -1,7 +1,6 @@
 from ast import literal_eval
 from spade_label_tool.metadata import Label, Token, Graph, BBox
 from spade_label_tool import custom_events as ce
-from spade_label_tool.utils import bbox_to_coord, hash_bboxes, coord_to_bbox
 from pandas import DataFrame
 import tkinter as tk
 import tkinter.filedialog as filedialog
@@ -53,7 +52,7 @@ def data_to_json(row, state, field_rs):
         row[REL_S_KEY].adj.tolist(),
         row[REL_G_KEY].adj.tolist()]
     # print('n rel_g: ', len(row[REL_G_KEY].edges))
-    j['coord'] = [bbox_to_coord(b) for b in row['img_bboxes']]
+    j['coord'] = [b.poly for b in row['img_bboxes']]
     j['vertical'] = [False for _ in (row['img_texts'])]
     if state.imgdir is not None:
         height, width, _ = cv2.imread(
@@ -101,7 +100,6 @@ def pick_data(_):
 
     df['img_texts'] = df['img_texts'].apply(literal_eval)
     df['img_bboxes'] = df['img_bboxes'].apply(literal_eval).apply(BBox)
-    df['img_bbox_hashes'] = df['img_bboxes'].apply(hash_bboxes)
     try:
         df['rel_s'] = df['rel_s'].apply(read_rel)
         df['rel_g'] = df['rel_g'].apply(read_rel)
@@ -158,7 +156,7 @@ def export_data(event):
         return
 
     save_to = pick_save_file(title="Save jsonl")
-    if save_to is None:
+    if not isinstance(save_to, str):
         return
 
     if not save_to.endswith(".jsonl"):
@@ -202,15 +200,14 @@ def import_jsonl(event):
         img_ids = [j['data_id'] for j in data]
         img_texts = [j['text'] for j in data]
         img_bboxes = [[BBox(b) for b in j['coord']] for j in data]
-        img_bbox_hashes = [hash_bboxes(bs) for bs in img_bboxes]
         s_graphs = [Graph(labels=labels,
-                          bboxes=img_bbox_hashes[i],
+                          bboxes=img_bboxes[i],
                           texts=img_texts[i],
                           adj=j['label'][0],
                           text_first=False)
                     for (i, j) in enumerate(data)]
         g_graphs = [Graph(labels=labels,
-                          bboxes=img_bbox_hashes[i],
+                          bboxes=img_bboxes[i],
                           texts=img_texts[i],
                           adj=j['label'][1],
                           text_first=False)
@@ -220,7 +217,6 @@ def import_jsonl(event):
         'img_id': img_ids,
         'img_texts': img_texts,
         'img_bboxes': img_bboxes,
-        'img_bbox_hashes': img_bbox_hashes,
         'graph_s': s_graphs,
         'graph_g': g_graphs,
     })

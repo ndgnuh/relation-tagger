@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
+import traceback
 from dataclasses import dataclass, field, fields
 from typing import Union, List, Callable, Optional
 from spade_label_tool import custom_events as ce
@@ -200,12 +201,14 @@ def toggle_rel_s(event, state):
                 rel.toggle_edge(b1.meta, b2.meta)
         except Exception:
             print(f"Can't add edge {b1}, {b2}")
+            traceback.print_exc()
     else:
         for (b1, b2) in zip(selection, selection[1:]):
             try:
                 rel.toggle_edge(b1.meta, b2.meta)
             except Exception:
                 print(f"Can't add edge {b1}, {b2}")
+                traceback.print_exc()
 
     ce.emit(ce.SUCCESS_REL_S, now=True)
 

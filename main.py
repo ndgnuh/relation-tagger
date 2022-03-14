@@ -134,7 +134,7 @@ def render_mainview(root, mainview_root, state, new_render_hash=None):
     i = state.data_index
     texts = df.loc[i, 'img_texts']
     bboxes = df.loc[i, 'img_bboxes']
-    bbox_hashes = df.loc[i, 'img_bbox_hashes']
+    bbox_hashes = [b.hash for b in bboxes]
 
     if cache.render_hash != new_render_hash or cache.render_hash is None:
         vbox = libbuttons.VBox(elems=[],

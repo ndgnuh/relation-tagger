@@ -49,6 +49,18 @@ class BBox:
 
     @property
     @cache
+    def poly(self):
+        if self.kind == BBox.TWO_CORNERS:
+            x1, x2, y1, y2 = self.bbox
+            return [[x1, y1],
+                    [x2, y1],
+                    [x2, y2],
+                    [x2, y1]]
+        else:
+            return self.bbox
+
+    @property
+    @cache
     def xy(self):
         if self.kind == BBox.TWO_CORNERS:
             return self.bbox
@@ -101,6 +113,8 @@ class BBox:
 
 class Graph:
     def __init__(s, labels, texts, bboxes, adj=None, text_first=True):
+        if not isinstance(bboxes[0], str):
+            bboxes = [b.hash for b in bboxes]
         s.labels = [Label(label) for label in labels]
         s.tokens = [Token(text, bbox) for (text, bbox) in zip(texts, bboxes)]
         s.edges = []
