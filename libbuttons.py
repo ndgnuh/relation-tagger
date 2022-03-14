@@ -89,6 +89,11 @@ class Button:
         return pg.Rect(s.x, s.y, s.total_width, s.total_height)
 
     @property
+    def abs_rect(s):
+        dx, dy = s.surface.get_offset()
+        return pg.Rect(s.x - dx, s.y - dy, s.total_width, s.total_height)
+
+    @property
     def total_width(s):
         font = get_default_font()
         txt = font.render(s.fulltext, True, (0, 0, 0))
@@ -179,10 +184,10 @@ class Button:
             cls.selection = []
 
     @classmethod
-    def handle_selection(cls, btn):
+    def handle_selection(cls, btn, include=False):
         if btn in cls.selection:
             cls.selection.remove(btn)
-        else:
+        elif not include:
             cls.selection.append(btn)
 
 

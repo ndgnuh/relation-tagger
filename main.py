@@ -12,6 +12,7 @@ import os
 import traceback
 from argparse import Namespace
 import theme
+import drag
 
 cache = Namespace()
 cache.render_hash = None
@@ -276,6 +277,7 @@ def main(state):
             libbuttons.Button.process_event(event)
             libio.process_event(event)
             states.process_event(event, state)
+            drag.process_event(event)
 
             # BUTTON PRESS
             if event.type == ce.BUTTON_PRESS:
@@ -286,6 +288,15 @@ def main(state):
                         cb()
                 elif isinstance(btn.meta, (Label, Token)):
                     libbuttons.Button.handle_selection(btn)
+
+            # DRAG SELECTION
+            if event.type == ce.ACTION_DRAG:
+                region = event.region
+                print("Len btns", len(libbuttons.Button.buttons))
+                for btn in libbuttons.Button.buttons:
+                    print(btn.abs_rect, region)
+                    if pg.Rect.colliderect(btn.abs_rect, region):
+                        libbuttons.Button.handle_selection(btn, include=True)
 
             # SCROLL
             if event.type == lc.MOUSEWHEEL:

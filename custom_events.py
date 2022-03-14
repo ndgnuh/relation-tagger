@@ -47,7 +47,8 @@ signals = [
     # DELETE RECORD
     "ACTION_DELETE_RECORD",
     # COPY TEXT TO CLIPBOARD
-    "ACTION_COPY"
+    "ACTION_COPY",
+    "ACTION_DRAG"
 ]
 
 for signal in signals:
