@@ -1,10 +1,10 @@
 from typing import List, Dict, Union, Optional, Callable
+from spade_label_tool.metadata import Label, Token, Menu
+from spade_label_tool import custom_events as ce
 import pygame as pg
 import pygame.locals as lc
 import theme
 from functools import cache
-from metadata import Label, Token, Menu
-import custom_events as ce
 
 
 def emit_signal(button):

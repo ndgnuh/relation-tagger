@@ -1,8 +1,8 @@
 from ast import literal_eval
-from metadata import Label, Token, Graph
+from spade_label_tool.metadata import Label, Token, Graph
+from spade_label_tool import custom_events as ce
+from spade_label_tool.utils import bbox_to_coord, hash_bboxes, coord_to_bbox
 from pandas import DataFrame
-from utils import bbox_to_coord, hash_bboxes, coord_to_bbox
-import custom_events as ce
 import tkinter as tk
 import tkinter.filedialog as filedialog
 import pandas as pd

@@ -1,11 +1,11 @@
-from dataclasses import dataclass, field, fields
-import pandas as pd
-from typing import Union, List, Callable, Optional
-import custom_events as ce
-from metadata import Label, Token, Graph
-import pickle
-from ast import literal_eval
 import numpy as np
+import pandas as pd
+import pickle
+from dataclasses import dataclass, field, fields
+from typing import Union, List, Callable, Optional
+from spade_label_tool import custom_events as ce
+from spade_label_tool.metadata import Label, Token, Graph
+from ast import literal_eval
 
 REL_S_KEY = 'graph_s'
 REL_G_KEY = 'graph_g'

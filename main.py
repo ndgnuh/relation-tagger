@@ -1,17 +1,17 @@
 import pygame as pg
 import pygame.locals as lc
-import libbuttons
-from metadata import Label, Token, Menu
-import utils
 import pickle
-import custom_events as ce
-from states import State, REL_S_KEY, REL_G_KEY
-import libio
-import states
 import os
 import traceback
-from argparse import Namespace
 import theme
+import sys
+from argparse import Namespace
+from spade_label_tool.states import State, REL_S_KEY, REL_G_KEY
+from spade_label_tool import libio, states, custom_events as ce, utils, libbuttons
+from spade_label_tool.metadata import Label, Token, Menu
+
+# COMPAT WITH OLDER SAVES
+sys.path.append("spade_label_tool")
 
 cache = Namespace()
 cache.render_hash = None
