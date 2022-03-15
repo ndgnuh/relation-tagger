@@ -173,7 +173,7 @@ class Button:
                     print(f"Button {btn.meta} clicked")
 
         # CLEAN BUTTONS WHEN DATA INDEX CHANGE
-        if event.type in [ce.SUCCESS_CHANGE_DATAINDEX,
+        if event.type in [ce.ACTION_CHANGE_DATAINDEX,
                           ce.SUCCESS_REL_S,
                           ce.SUCCESS_REL_G,
                           ce.SUCCESS_REL_REMOVE,
