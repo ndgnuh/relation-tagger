@@ -91,7 +91,7 @@ class Button:
     @property
     def abs_rect(s):
         dx, dy = s.surface.get_offset()
-        return pg.Rect(s.x - dx, s.y - dy, s.total_width, s.total_height)
+        return pg.Rect(s.x + dx, s.y + dy, s.total_width, s.total_height)
 
     @property
     def total_width(s):
@@ -185,9 +185,9 @@ class Button:
 
     @classmethod
     def handle_selection(cls, btn, include=False):
-        if btn in cls.selection:
+        if btn in cls.selection and not include:
             cls.selection.remove(btn)
-        elif not include:
+        else:
             cls.selection.append(btn)
 
 

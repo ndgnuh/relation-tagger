@@ -54,6 +54,14 @@ def render(root, state):
     render_menu(root, cache.menu_root, state)
     cache.render_hash = new_render_hash
 
+    # DRAW DRAGING REGION
+    if drag.is_dragging():
+        r = drag.drag_region()
+        s = pg.Surface((r.w, r.h))
+        s.set_alpha(125)
+        s.fill(theme.btn_bg_selected)
+        root.blit(s, (r.x, r.y))
+
 
 def render_image(root, image_root, state):
     if state.data is None or state.imgdir is None:
@@ -292,10 +300,8 @@ def main(state):
             # DRAG SELECTION
             if event.type == ce.ACTION_DRAG:
                 region = event.region
-                print("Len btns", len(libbuttons.Button.buttons))
                 for btn in libbuttons.Button.buttons:
-                    print(btn.abs_rect, region)
-                    if pg.Rect.colliderect(btn.abs_rect, region):
+                    if pg.Rect.colliderect(btn.abs_rect, region) and isinstance(btn.meta, (Token, Label)):
                         libbuttons.Button.handle_selection(btn, include=True)
 
             # SCROLL
@@ -354,6 +360,8 @@ def main(state):
             if event.type == lc.QUIT:
                 pg.quit()
                 return
+
+        # UPDATE DISPLAY
         pg.display.flip()
         clock.tick(30)
 
