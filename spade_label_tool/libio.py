@@ -69,7 +69,7 @@ def data_to_json(row, state, field_rs):
 def pick_label(_):
     label_file = pick_file(title="Pick label file")
     if label_file is None:
-        ce.emit(ce.ERROR_IMPORT_LABELS, now=True)
+        ce.emit(ce.ERROR_IMPORT_LABELS)
         return
 
     with open(label_file, encoding='utf8') as f:
@@ -77,20 +77,20 @@ def pick_label(_):
         labels = [label.replace(",", '').strip() for label in labels]
         labels = [label.replace('"', '').strip() for label in labels]
         labels = [label for label in labels if len(label) > 0]
-        ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels, now=True)
+        ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels)
 
 
 @eh.register(ce.ACTION_IMPORT_DATA)
 def pick_data(_):
     file = pick_file(title="Pick data file")
     if file is None:
-        ce.emit(ce.ERROR_IMPORT_DATA, now=True)
+        ce.emit(ce.ERROR_IMPORT_DATA)
         return
 
     try:
         df = pd.read_csv(file)
     except Exception as e:
-        ce.emit(ce.ERROR_IMPORT_DATA, error=e, now=True)
+        ce.emit(ce.ERROR_IMPORT_DATA, error=e)
         return
 
     def read_rel(rel):
@@ -106,14 +106,14 @@ def pick_data(_):
     except Exception:
         pass
 
-    ce.emit(ce.SUCCESS_IMPORT_DATA, data=df, now=True)
+    ce.emit(ce.SUCCESS_IMPORT_DATA, data=df)
 
 
 @eh.register(ce.ACTION_SELECT_IMGDIR)
 def pick_img_dir(_):
     d = pick_directory()
     if d is not None:
-        ce.emit(ce.SUCCESS_SELECT_IMGDIR, imgdir=d, now=True)
+        ce.emit(ce.SUCCESS_SELECT_IMGDIR, imgdir=d)
 
 
 @eh.register(ce.REQUEST_SAVE_SESSION)
@@ -129,7 +129,7 @@ def _(event):
         with open(file, "wb") as f:
             pickle.dump(event.state, f)
 
-        ce.emit(ce.SUCCESS_SAVE_SESSION, now=True)
+        ce.emit(ce.SUCCESS_SAVE_SESSION)
     except Exception:
         traceback.print_exc()
 
@@ -144,7 +144,7 @@ def _(event):
         with open(file, 'rb') as f:
             state = pickle.load(f)
 
-        ce.emit(ce.REQUEST_LOAD_SESSION, now=True, state=state)
+        ce.emit(ce.REQUEST_LOAD_SESSION, state=state)
     except Exception:
         traceback.print_exc()
 
@@ -220,9 +220,9 @@ def import_jsonl(event):
         'graph_s': s_graphs,
         'graph_g': g_graphs,
     })
-    ce.emit(ce.SUCCESS_IMPORT_DATA, data=df, now=True)
+    ce.emit(ce.SUCCESS_IMPORT_DATA, data=df)
     ce.emit(ce.SUCCESS_IMPORT_LABELS, labels=labels,
-            labels_rs=labels_rs, now=True)
+            labels_rs=labels_rs)
 
 
 process_event = eh.process_event

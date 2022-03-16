@@ -55,21 +55,12 @@ for signal in signals:
 
 
 def emit(sig, **kwargs):
-    now = False
-    if 'now' in kwargs:
-        now = kwargs.pop('now')
-
-    def f():
-        e = pge.Event(sig, kwargs)
-        pge.post(e)
-
-    if now:
-        return f()
-    else:
-        return f
-
+    e = pge.Event(sig, kwargs)
+    pge.post(e)
 
 # JUST A LOOKUP TABLE
+
+
 class EventHandler:
     def __init__(self):
         self.callbacks = {}
@@ -83,3 +74,12 @@ class EventHandler:
         callback = self.callbacks.get(event.type)
         if callback:
             callback(event, *args, **kwargs)
+
+
+def emit_func(sig, **kwargs):
+    e = pge.Event(sig, **kwargs)
+
+    def f(*args, **kwargs_):
+        pge.post(e)
+
+    return f
