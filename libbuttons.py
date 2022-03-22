@@ -185,9 +185,9 @@ class Button:
 
     @classmethod
     def handle_selection(cls, btn, include=False):
-        if btn in cls.selection:
+        if btn in cls.selection and not include:
             cls.selection.remove(btn)
-        elif not include:
+        else:
             cls.selection.append(btn)
 
 
