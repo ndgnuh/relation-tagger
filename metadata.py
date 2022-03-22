@@ -95,6 +95,10 @@ class Graph:
         adj_tokens = np.zeros((ntokens, ntokens), dtype=int)
         adj_labels = np.zeros((nlabels, ntokens), dtype=int)
 
+        for (i, j) in self.edges:
+            if (i == j):
+                self.edges.remove(i, j)
+
         for (i, l) in enumerate(self.labels):
             for (j, t) in enumerate(self.tokens):
                 if (l, t) in self.edges:
@@ -102,6 +106,8 @@ class Graph:
 
         for (i, u) in enumerate(self.tokens):
             for (j, v) in enumerate(self.tokens):
+                if (i == j):
+                    continue
                 if (u, v) in self.edges:
                     adj_tokens[i, j] = True
 
