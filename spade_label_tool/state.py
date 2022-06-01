@@ -7,8 +7,18 @@ from typing import Optional, Dict, List, Callable
 class State:
     data: Optional[Dict]
     data_index: int = 1
+    is_running: bool = True
 
 
 def create_state():
     state = State(data=None)
     return bind(state)
+
+
+def stop(state):
+    state = state.is_running.set(False)
+    return bind(state)
+
+
+def read_data(state, path):
+    return state
