@@ -21,5 +21,4 @@ def draw(manager):
         relative_rect=pg.Rect((x, 0), (100, 50)),
         text='Export',
         manager=manager)
-
     return ns

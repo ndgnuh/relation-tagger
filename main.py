@@ -10,7 +10,8 @@ def main():
     pg.init()
     pg.display.set_caption("Spade label tool")
     root_sf = pg.display.set_mode((800, 600), RESIZABLE)
-    manager = pgui.UIManager(root_sf.get_size())
+    state = State.create_ui_manager(state, root_sf)
+    manager = state.ui.manager.get()
     ui = static_ui.draw(manager)
 
     clock = pg.time.Clock()
@@ -20,6 +21,14 @@ def main():
             if event.type == pg.QUIT:
                 state = State.stop(state)
 
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == ui.import_label_btn:
+                    state = State.pickfile(state, 'labelfile')
+
+            if event.type == pgui.UI_FILE_DIALOG_PATH_PICKED:
+                if event.ui_element == state.ui.filepicker_labelfile.get():
+                    state = State.load_labels(state, event.text)
+                    print(state.data.labels.get())
             manager.process_events(event)
 
         manager.update(time_delta)
