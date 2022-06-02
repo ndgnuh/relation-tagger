@@ -11,6 +11,7 @@ class UI:
     manager: any = None
     filepicker_labelfile: any = None
     filepicker_datafile: any = None
+    button_labels: Optional[List] = None
 
 
 @dataclass
@@ -46,8 +47,23 @@ def load_labels(state, labelfile):
         labels = [label.strip() for label in labels]
         labels = [label for label in labels
                   if len(label) > 0]
-    state = state.data.labels.set(labels)
-    return bind(state)
+    # Label data
+    state = bind(state.data.labels.set(labels))
+
+    # Label UI buttons
+    buttons = []
+    y = 50
+    height = 50
+    manager = state.ui.manager.get()
+    for label in labels:
+        button = pgui.elements.UIButton(
+            relative_rect=pg.Rect(0, y, 200, height),
+            text=label,
+            manager=manager)
+        y = y + height
+        buttons.append(button)
+    state = bind(state.ui.button_labels.set(buttons))
+    return state
 
 
 def create_ui_manager(state, root):
