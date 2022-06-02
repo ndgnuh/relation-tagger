@@ -27,6 +27,19 @@ class State:
     ui: UI = UI()
 
 
+def setui(focus, ui):
+    def kill_recursively(elems):
+        if elems is None:
+            return
+        elif isinstance(elems, list):
+            for e in elems:
+                kill_recursively(e)
+        elif hasattr(elems, "kill"):
+            elems.kill()
+    kill_recursively(focus.get())
+    return focus.set(ui)
+
+
 def create_state():
     state = State(data=Data())
     return bind(state)
@@ -62,7 +75,8 @@ def load_labels(state, labelfile):
             manager=manager)
         y = y + height
         buttons.append(button)
-    state = bind(state.ui.button_labels.set(buttons))
+    state = setui(state.ui.button_labels, buttons)
+    state = bind(state)
     return state
 
 
@@ -74,8 +88,12 @@ def create_ui_manager(state, root):
 
 def pickfile(state, name):
     attr = f'filepicker_{name}'
+    # old_picker = state.ui.GetAttr(attr).get()
+    # if old_picker is not None:
+    #     old_picker.kill()
+    # print(old_picker)
     picker = pgui.windows.UIFileDialog(
         rect=pg.Rect(0, 0, 400, 400),
         manager=state.ui.manager.get())
-    state = state.ui.GetAttr(attr).set(picker)
+    state = setui(state.ui.GetAttr(attr), picker)
     return bind(state)
