@@ -24,11 +24,14 @@ def main():
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == ui.import_label_btn:
                     state = State.pickfile(state, 'labelfile')
+                if event.ui_element == ui.import_btn:
+                    state = State.pickfile(state, 'datafile')
 
             if event.type == pgui.UI_FILE_DIALOG_PATH_PICKED:
                 if event.ui_element == state.ui.filepicker_labelfile.get():
                     state = State.load_labels(state, event.text)
-                    print(state.data.labels.get())
+                if event.ui_element == state.ui.filepicker_datafile.get():
+                    state = State.load_data(state, event.text)
             manager.process_events(event)
 
         manager.update(time_delta)

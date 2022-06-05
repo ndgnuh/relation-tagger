@@ -4,6 +4,7 @@ import pygame_gui as pgui
 from lenses import lens, bind
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Callable
+import json
 
 
 @dataclass(frozen=True, eq=True)
@@ -12,11 +13,15 @@ class UI:
     filepicker_labelfile: any = None
     filepicker_datafile: any = None
     button_labels: Optional[List] = None
+    button_texts: Optional[List] = None
 
 
 @dataclass
 class Data:
     labels: Optional[List[str]] = None
+    texts: Optional[List[List[str]]] = None
+    bboxes: Optional[List[List[List[int]]]] = None
+    dataindex: Optional[int] = None
 
 
 @dataclass(frozen=True, eq=True)
@@ -51,6 +56,41 @@ def stop(state):
 
 
 def read_data(state, path):
+    return state
+
+
+def load_data(state, datafile):
+    with open(datafile) as f:
+        data = [json.loads(line) for line in f.readlines()]
+
+    # Empty data
+    if len(data) == 0:
+        return state
+
+    # Data state
+    texts = [d['text'] for d in data]
+    bboxes = [d['coord'] for d in data]
+    state = bind(state.data.texts.set(texts))
+    state = bind(state.data.bboxes.set(bboxes))
+    state = bind(state.data.dataindex.set(0))
+
+    # UI state
+    manager = state.ui.manager.get()
+    cbboxes = bboxes[0]
+    ctexts = texts[0]
+    buttons = []
+    for (text, bbox) in zip(ctexts, cbboxes):
+        tl, tr, br, bl = bbox
+        x1, y1 = tl
+        x2, y2 = br
+        button = pgui.elements.UIButton(
+            relative_rect=pg.Rect(x1, y1, x2 - x1, y2 - y1),
+            text=text,
+            manager=manager
+        )
+        buttons.append(button)
+    state = setui(state.ui.button_texts, buttons)
+    state = bind(state)
     return state
 
 

@@ -21,4 +21,9 @@ def draw(manager):
         relative_rect=pg.Rect((x, 0), (100, 50)),
         text='Export',
         manager=manager)
+    # x += ns.export_btn.relative_rect.width
+    # ns.import_data = pgui.elements.UIButton(
+    #     relative_rect=pg.Rect((x, 0), (100, 50)),
+    #     text='Import data',
+    #     manager=manager)
     return ns
