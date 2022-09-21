@@ -107,12 +107,20 @@ def render_arrows(root, state):
     for (b1, b2) in rel_s.edges:
         if (b1, b2) in rel_g.edges:
             continue
+
+        # if isinstance(b1, Label):
+        #     continue
+        # if isinstance(b2, Label):
+        #     print("[Warning]",
+        #           f"button {b2} is a label and at the end of an arrow")
+        #     continue
+
         b1 = libbuttons.Button.get_button_by_meta(b1)
         b2 = libbuttons.Button.get_button_by_meta(b2)
         libbuttons.draw_line(root,
                              b1,
                              b2,
-                             theme.rel_s_color, thickness=2)
+                             theme.rel_s_color, thickness=theme.arrow_thickness)
 
     for (b1, b2) in rel_g.edges:
         if (b1, b2) in rel_s.edges:
@@ -122,7 +130,7 @@ def render_arrows(root, state):
         libbuttons.draw_line(root,
                              b1,
                              b2,
-                             theme.rel_g_color, thickness=2)
+                             theme.rel_g_color, thickness=theme.arrow_thickness)
 
     for (b1, b2) in rel_g.edges:
         if (b1, b2) not in rel_s.edges:
@@ -132,7 +140,7 @@ def render_arrows(root, state):
         libbuttons.draw_line(root,
                              b1,
                              b2,
-                             theme.rel_both_color, thickness=2)
+                             theme.rel_both_color, thickness=theme.arrow_thickness)
 
 
 def render_mainview(root, mainview_root, state, new_render_hash=None):
@@ -295,14 +303,15 @@ def main(state):
                     if cb is not None:
                         cb()
                 elif isinstance(btn.meta, (Label, Token)):
-                    libbuttons.Button.handle_selection(btn)
+                    libbuttons.Button.handle_selection(btn, state=state)
 
             # DRAG SELECTION
             if event.type == ce.ACTION_DRAG:
                 region = event.region
                 for btn in libbuttons.Button.buttons:
                     if pg.Rect.colliderect(btn.abs_rect, region) and isinstance(btn.meta, (Token, Label)):
-                        libbuttons.Button.handle_selection(btn, include=True)
+                        libbuttons.Button.handle_selection(
+                            btn, include=True, state=state)
 
             # SCROLL
             if event.type == lc.MOUSEWHEEL:

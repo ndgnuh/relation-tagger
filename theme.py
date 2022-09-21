@@ -10,6 +10,9 @@ theme.btn_bg_normal = (255, 255, 255)
 # SELECTED
 theme.btn_fg_selected = (33, 33, 33)
 theme.btn_bg_selected = (100, 255, 255)
+# SELECTED ALONG WITH LABEL
+theme.btn_fg_label_selected = (33, 33, 33)
+theme.btn_bg_label_selected = (155, 155, 255)
 # HOVER
 theme.btn_fg_hover = (0, 0, 0)
 theme.btn_bg_hover = (228, 230, 235)
@@ -22,6 +25,7 @@ theme.image_ratio = 0.3
 theme.rel_g_color = (255, 100, 100)
 theme.rel_s_color = (100, 100, 255)
 theme.rel_both_color = (255, 100, 255)
+theme.arrow_thickness = 1
 
 
 def __getattr__(key):

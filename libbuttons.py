@@ -24,6 +24,7 @@ class Button:
     buttons_by_hash: Dict = {}
     buttons_hover: Dict = {}
     selection: List = []
+    label_selection: List = []
 
     @classmethod
     def get_button_by_meta(cls, meta):
@@ -74,6 +75,8 @@ class Button:
         self.fg_hover: tuple = theme.btn_fg_hover
         self.bg_selected: tuple = theme.btn_bg_selected
         self.fg_selected: tuple = theme.btn_fg_selected
+        self.bg_label_selected: tuple = theme.btn_bg_label_selected
+        self.fg_label_selected: tuple = theme.btn_fg_label_selected
         self.selected = selected
         self.width = width
         self.height = height
@@ -122,6 +125,10 @@ class Button:
     def is_selected(self):
         return self in self.__class__.selection
 
+    @property
+    def is_label_selected(self):
+        return self.meta in self.__class__.label_selection
+
     def selected_prefix(self):
         if self.is_selected:
             cls = self.__class__
@@ -142,6 +149,9 @@ class Button:
         elif self.is_hovered:
             bg = self.bg_hover
             fg = self.fg_hover
+        elif self.is_label_selected:
+            bg = self.bg_label_selected
+            fg = self.fg_label_selected
         else:
             bg = self.bg_normal
             fg = self.fg_normal
@@ -184,12 +194,31 @@ class Button:
             cls.selection = []
 
     @classmethod
-    def handle_selection(cls, btn, include=False):
+    def handle_selection(cls, btn, include=False, state=None):
         if btn in cls.selection:
             if not include:
                 cls.selection.remove(btn)
         elif btn.rendered:
             cls.selection.append(btn)
+
+        print("Handle selection, btn.meta", btn.meta)
+        if isinstance(btn.meta, Label):
+            cls.label_selection = []
+
+            if btn.is_selected:
+                df = state.data
+                i = state.data_index
+
+                REL_S_KEY = 'graph_s'
+                if REL_S_KEY not in df.columns:
+                    return
+
+                rel_s = df.loc[i, REL_S_KEY]
+
+                for b1, b2 in rel_s.edges:
+                    if b1 == btn.meta:
+                        cls.label_selection.append(b2)
+            print(cls.label_selection)
 
 
 class Box:

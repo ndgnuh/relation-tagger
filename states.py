@@ -72,8 +72,8 @@ class State(Reactive):
     labelfile: Optional[str] = None
     labels: Optional[List[str]] = None
     labels_rs: List[str] = field(default_factory=list)
-    rel_s: List = field(default_factory=list)
-    rel_g: List = field(default_factory=list)
+    # rel_s: List = field(default_factory=list)
+    # rel_g: List = field(default_factory=list)
     selection: List = field(default_factory=list)
     # UI
     mainview_y_offset: int = 50
