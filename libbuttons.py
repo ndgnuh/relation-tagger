@@ -201,7 +201,7 @@ class Button:
         elif btn.rendered:
             cls.selection.append(btn)
 
-        print("Handle selection, btn.meta", btn.meta)
+        # print("Handle selection, btn.meta", btn.meta)
         if isinstance(btn.meta, Label):
             cls.label_selection = []
 
@@ -218,7 +218,7 @@ class Button:
                 for b1, b2 in rel_s.edges:
                     if b1 == btn.meta:
                         cls.label_selection.append(b2)
-            print(cls.label_selection)
+            # print(cls.label_selection)
 
 
 class Box:
