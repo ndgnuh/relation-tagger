@@ -192,6 +192,7 @@ class Button:
 
         if event.type == lc.MOUSEBUTTONUP and event.button == 3:
             cls.selection = []
+            cls.label_selection = []
 
     @classmethod
     def handle_selection(cls, btn, include=False, state=None):
@@ -203,24 +204,25 @@ class Button:
 
         # print("Handle selection, btn.meta", btn.meta)
         if isinstance(btn.meta, Label):
-            df = state.data
-            i = state.data_index
+            for b in cls.selection:
+                if b != btn and isinstance(b.meta, Label):
+                    cls.selection.remove(b)
 
-            REL_S_KEY = 'graph_s'
-            if REL_S_KEY not in df.columns:
-                return
+            cls.label_selection = []
 
-            rel_s = df.loc[i, REL_S_KEY]
+            if btn.is_selected:
+                df = state.data
+                i = state.data_index
 
-            for b1, b2 in rel_s.edges:
-                if b1 == btn.meta:
-                    if btn.is_selected:
+                REL_S_KEY = 'graph_s'
+                if REL_S_KEY not in df.columns:
+                    return
+
+                rel_s = df.loc[i, REL_S_KEY]
+
+                for b1, b2 in rel_s.edges:
+                    if b1 == btn.meta:
                         cls.label_selection.append(b2)
-                    else:
-                        try:
-                            cls.label_selection.remove(b2)
-                        except Exception:
-                            pass
             # print(cls.label_selection)
 
 
