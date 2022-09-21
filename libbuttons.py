@@ -203,21 +203,24 @@ class Button:
 
         # print("Handle selection, btn.meta", btn.meta)
         if isinstance(btn.meta, Label):
-            cls.label_selection = []
+            df = state.data
+            i = state.data_index
 
-            if btn.is_selected:
-                df = state.data
-                i = state.data_index
+            REL_S_KEY = 'graph_s'
+            if REL_S_KEY not in df.columns:
+                return
 
-                REL_S_KEY = 'graph_s'
-                if REL_S_KEY not in df.columns:
-                    return
+            rel_s = df.loc[i, REL_S_KEY]
 
-                rel_s = df.loc[i, REL_S_KEY]
-
-                for b1, b2 in rel_s.edges:
-                    if b1 == btn.meta:
+            for b1, b2 in rel_s.edges:
+                if b1 == btn.meta:
+                    if btn.is_selected:
                         cls.label_selection.append(b2)
+                    else:
+                        try:
+                            cls.label_selection.remove(b2)
+                        except Exception:
+                            pass
             # print(cls.label_selection)
 
 
