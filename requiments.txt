@@ -2,4 +2,4 @@ pygame
 pygame-gui
 lenses
 numpy
-pandas
+plum-dispatch

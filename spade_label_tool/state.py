@@ -2,34 +2,37 @@
 import pygame as pg
 import pygame_gui as pgui
 from lenses import lens, bind
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, Dict, List, Callable
 import json
+from functools import cached_property
 
 
 @dataclass(frozen=True, eq=True)
 class UI:
     manager: any = None
-    filepicker_labelfile: any = None
-    filepicker_datafile: any = None
-    button_labels: Optional[List] = None
-    button_texts: Optional[List] = None
+    window_width: int = 600
+    window_height: int = 600
 
-
-@dataclass
-class Data:
-    labels: Optional[List[str]] = None
-    texts: Optional[List[List[str]]] = None
-    bboxes: Optional[List[List[List[int]]]] = None
-    dataindex: Optional[int] = None
+    @property
+    def window_size(self):
+        return self.window_width, self.window_height
 
 
 @dataclass(frozen=True, eq=True)
 class State:
-    data: Data = Data()
+    selection: List[Dict] = field(default_factory=list)
+    data: Optional[List[Dict]] = None
     data_index: int = 1
     is_running: bool = True
     ui: UI = UI()
+
+    @property
+    def current_data(self):
+        if self.data is None:
+            return None
+        else:
+            return self.data[self.data_index]
 
 
 def setui(focus, ui):
@@ -46,7 +49,7 @@ def setui(focus, ui):
 
 
 def create_state():
-    state = State(data=Data())
+    state = State()
     return bind(state)
 
 
