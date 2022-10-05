@@ -3,7 +3,7 @@ import pygame as pg
 import pygame_gui as pgui
 from lenses import lens, bind
 from dataclasses import dataclass, field
-from typing import Optional, Dict, List, Callable
+from typing import Optional, Dict, List, Callable, Tuple
 import json
 from functools import cached_property
 
@@ -21,11 +21,12 @@ class UI:
 
 @dataclass(frozen=True, eq=True)
 class State:
-    selection: List[Dict] = field(default_factory=list)
     data: Optional[List[Dict]] = None
     data_index: int = 1
     is_running: bool = True
     ui: UI = UI()
+    ui_selection_region: Optional[Tuple[int]] = None
+    selection: Tuple[int] = field(default_factory=tuple)
 
     @property
     def current_data(self):

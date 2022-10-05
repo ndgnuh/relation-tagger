@@ -29,17 +29,20 @@ def _(event, state):
 def textbox_select(event, state):
     button = event.dict['ui_element']
     idx = button.index
-    selection = state.selection.get()
+    selection = list(state.selection.get())
     if idx in selection:
         selection = [jdx for jdx in selection if idx != jdx]
     else:
         selection = selection + [idx]
-    state = bind(state.selection.set(selection))
+    print(selection)
+    state = bind(state.selection.set(tuple(selection)))
     return state
 
 
 def event_handler(event, state):
+    print('event', event)
     btn_id = getattr(event.dict['ui_element'], "id", None)
+    print('btn_id', btn_id)
     if btn_id is None:
         print(event.dict['ui_element'], "has no button id")
         return state
