@@ -9,29 +9,40 @@ import pygame as pg
 from pygame.locals import *
 from spade_label_tool.events import (
     handle_buttons,
-    handle_pickers)
+    handle_pickers,
+    handle_mouse,
+    handle_keyboard)
+
+
+def handle_resize(event, state):
+    manager = state.ui.manager.get()
+    manager.set_window_resolution((event.w, event.h))
+    state = bind(state.ui.window_width.set(event.w))
+    state = bind(state.ui.window_height.set(event.h))
+    return state
 
 
 def handle_event(event, state):
-    # print("Debug", event)
     manager = state.ui.manager.get()
+
+    event_type_dispatch = {
+        pg.VIDEORESIZE: handle_resize,
+        pg.MOUSEBUTTONUP: handle_mouse,
+        pg.MOUSEBUTTONDOWN: handle_mouse,
+        pg.MOUSEMOTION: handle_mouse,
+        # pg.KEYDOWN: handle_keyboard,
+        pg.KEYUP: handle_keyboard,
+        pgui.UI_BUTTON_PRESSED: handle_buttons,
+        pgui.UI_FILE_DIALOG_PATH_PICKED: handle_pickers,
+    }
+
     if event.type == pg.QUIT:
         state = State.stop(state)
 
-    if event.type == pgui.UI_BUTTON_PRESSED:
-        state = handle_buttons(event, state)
+    handler = event_type_dispatch.get(event.type, None)
+    if handler is not None:
+        state = handler(event, state)
 
-    if event.type == pg.MOUSEBUTTONUP:
-        if event.button == 3:
-            state = bind(state.selection.set([]))
-
-    if event.type == pgui.UI_FILE_DIALOG_PATH_PICKED:
-        state = handle_pickers(event, state)
-
-    if event.type == pg.VIDEORESIZE:
-        state = bind(state.ui.window_width.set(event.w))
-        state = bind(state.ui.window_height.set(event.h))
-        manager.set_window_resolution((event.w, event.h))
     manager.process_events(event)
     return state
 
@@ -46,18 +57,22 @@ def main():
     state = bind(state.ui.window_height.set(root_sf.get_height()))
     manager = state.ui.manager.get()
 
+    dui = dynamic_ui.DrawContext(root=root_sf, manager=manager)
     clock = pg.time.Clock()
     static_ui.draw(manager)
     while state.is_running.get():
         time_delta = clock.tick(60) / 1000.0
-        dynamic_ui.draw(state)
         for event in pg.event.get():
+            dui.manager.process_events(event)
             state = handle_event(event, state)
 
         manager.update(time_delta)
         background = pg.Surface(root_sf.get_size())
         background.fill(pg.Color(31, 31, 31))
         root_sf.blit(background, (0, 0))
+        dui.draw(state)
+        # print('container', vars(state.ui.manager.get().root_container))
+
         manager.draw_ui(root_sf)
         pg.display.update()
 

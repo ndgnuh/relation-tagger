@@ -34,7 +34,6 @@ def textbox_select(event, state):
         selection = [jdx for jdx in selection if idx != jdx]
     else:
         selection = selection + [idx]
-    print(selection)
     state = bind(state.selection.set(tuple(selection)))
     return state
 

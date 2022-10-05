@@ -128,16 +128,3 @@ def create_ui_manager(state, root):
     manager = pgui.UIManager(root.get_size())
     state = state.ui.manager.set(manager)
     return bind(state)
-
-
-def pickfile(state, name):
-    attr = f'filepicker_{name}'
-    # old_picker = state.ui.GetAttr(attr).get()
-    # if old_picker is not None:
-    #     old_picker.kill()
-    # print(old_picker)
-    picker = pgui.windows.UIFileDialog(
-        rect=pg.Rect(0, 0, 400, 400),
-        manager=state.ui.manager.get())
-    state = setui(state.ui.GetAttr(attr), picker)
-    return bind(state)
