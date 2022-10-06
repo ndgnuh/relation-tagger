@@ -28,6 +28,7 @@ class State:
     ui_selection_region: Optional[Tuple[int]] = None
     ui_scroll_x: int = 0
     ui_scroll_y: int = 0
+    ui_zoom_factor: int = 20
     selection: Tuple[int] = field(default_factory=tuple)
 
     @property

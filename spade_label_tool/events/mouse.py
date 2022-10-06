@@ -47,10 +47,16 @@ def move_selection(event, state):
 @callbacks((pygame.MOUSEWHEEL, None))
 def scroll(event, state):
     delta = 50
-    if pygame.key.get_mods() & pygame.locals.KMOD_CTRL:
+    mods = pygame.key.get_mods()
+    if mods & pygame.locals.KMOD_SHIFT:
         scroll = state.ui_scroll_x.get()
         scroll = delta * event.y + scroll
         state = bind(state.ui_scroll_x.set(scroll))
+    elif mods & pygame.KMOD_CTRL:
+        zoom_factor = state.ui_zoom_factor.get()
+        zoom_factor = 5 * event.y + zoom_factor
+        zoom_factor = min(max(zoom_factor, 0), 100)
+        state = bind(state.ui_zoom_factor.set(zoom_factor))
     else:
         scroll = state.ui_scroll_y.get()
         scroll = delta * event.y + scroll

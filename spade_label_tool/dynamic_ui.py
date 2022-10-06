@@ -44,7 +44,8 @@ class DrawContext(dict):
                           width: int,
                           height: int,
                           scroll_x: int,
-                          scroll_y: int):
+                          scroll_y: int,
+                          zoom_factor: int):
         if current_data is None:
             return
 
@@ -60,7 +61,7 @@ class DrawContext(dict):
         boxes[[0, 2]] *= width
         boxes[[1, 3]] *= width
 
-        min_height = 20
+        min_height = zoom_factor
         current_min_height = (boxes[3] - boxes[1]).min()
         if min_height > current_min_height:
             ratio = min_height / current_min_height
@@ -101,4 +102,5 @@ class DrawContext(dict):
             state.ui.window_height.get(),
             state.ui_scroll_x.get(),
             state.ui_scroll_y.get(),
+            state.ui_zoom_factor.get(),
         )
