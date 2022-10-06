@@ -30,11 +30,14 @@ def handle_event(event, state):
         pg.MOUSEBUTTONUP: handle_mouse,
         pg.MOUSEBUTTONDOWN: handle_mouse,
         pg.MOUSEMOTION: handle_mouse,
+        pg.MOUSEWHEEL: handle_mouse,
         # pg.KEYDOWN: handle_keyboard,
         pg.KEYUP: handle_keyboard,
         pgui.UI_BUTTON_PRESSED: handle_buttons,
         pgui.UI_FILE_DIALOG_PATH_PICKED: handle_pickers,
     }
+    # if event.type not in event_type_dispatch:
+    #     print(event)
 
     if event.type == pg.QUIT:
         state = State.stop(state)

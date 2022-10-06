@@ -26,6 +26,8 @@ class State:
     is_running: bool = True
     ui: UI = UI()
     ui_selection_region: Optional[Tuple[int]] = None
+    ui_scroll_x: int = 0
+    ui_scroll_y: int = 0
     selection: Tuple[int] = field(default_factory=tuple)
 
     @property

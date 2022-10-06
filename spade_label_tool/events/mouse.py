@@ -24,7 +24,7 @@ def maybe_start_selection(event, state):
     return state
 
 
-@callbacks(pygame.MOUSEMOTION)
+@callbacks((pygame.MOUSEMOTION, None))
 def move_selection(event, state):
     region = state.ui_selection_region.get()
     if region is None:
@@ -41,6 +41,20 @@ def move_selection(event, state):
     if w > 10 and h > 10:
         state = bind(state.ui_selection_region.set(
             pygame.Rect(x1, y1, w, h)))
+    return state
+
+
+@callbacks((pygame.MOUSEWHEEL, None))
+def scroll(event, state):
+    delta = 50
+    if pygame.key.get_mods() & pygame.locals.KMOD_CTRL:
+        scroll = state.ui_scroll_x.get()
+        scroll = delta * event.y + scroll
+        state = bind(state.ui_scroll_x.set(scroll))
+    else:
+        scroll = state.ui_scroll_y.get()
+        scroll = delta * event.y + scroll
+        state = bind(state.ui_scroll_y.set(scroll))
     return state
 
 
@@ -70,10 +84,8 @@ def clear_region(event, state):
 
 
 def handle_mouse(event, state):
-    if event.type == pygame.MOUSEMOTION:
-        callback = callbacks.get(event.type, None)
-    else:
-        callback = callbacks.get((event.type, event.button), None)
+    callback = callbacks.get(
+        (event.type, getattr(event, "button", None)), None)
     if callback is None:
         return state
 
