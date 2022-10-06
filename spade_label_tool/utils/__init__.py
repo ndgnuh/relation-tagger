@@ -42,15 +42,16 @@ def write_jsonl(path: str, data):
 
 def write_jsonl_ui(state, path, data):
     manager = state.ui.manager.get()
+    rect = state.dialog_rect.get()
     data, error = write_jsonl(path, data)
     if error:
         UIMessageWindow(html_message=f"Error {error}",
                         manager=manager,
-                        rect=pygame.Rect(0, 0, 200, 300))
+                        rect=rect)
     else:
         UIMessageWindow(html_message=f"Success, data to {path}",
                         manager=manager,
-                        rect=pygame.Rect(0, 0, 200, 300))
+                        rect=rect)
 
 
 def get_rect(x1, y1, x2, y2):

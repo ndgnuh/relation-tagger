@@ -1,10 +1,11 @@
 # Handle states + dynamic UI
 import pygame as pg
 import pygame_gui as pgui
+import json
+import pygame
 from lenses import lens, bind
 from dataclasses import dataclass, field
 from typing import Optional, Dict, List, Callable, Tuple
-import json
 from functools import cached_property
 
 
@@ -37,6 +38,15 @@ class State:
             return None
         else:
             return self.data[self.data_index]
+
+    @property
+    def dialog_rect(self):
+        ww = self.ui.window_width
+        wh = self.ui.window_height
+        xpad = ww // 10
+        ypad = wh // 10
+        rect = pygame.Rect(xpad, ypad, ww - 2 * xpad, wh - 2 * ypad)
+        return rect
 
 
 def setui(focus, ui):
