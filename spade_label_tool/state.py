@@ -12,10 +12,14 @@ from functools import cached_property
 
 @dataclass(frozen=True, eq=True)
 class State:
+    # App related
+    is_running: bool = True
+
+    # Data related
     data: Optional[List[Dict]] = None
     data_index: int = 1
-    is_running: bool = True
     selection: Tuple[int] = field(default_factory=tuple)
+    data_file_to_save: Optional[str] = None
 
     # UI
     ui_manager: pygame_gui.UIManager = None
