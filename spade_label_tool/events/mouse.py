@@ -76,7 +76,12 @@ def select_region(event, state):
                      if pygame.Rect.colliderect(rect, region)
                      and i is not None]
     selection = (*selection, *new_selection)
-    selection = tuple(set(selection))
+    selection = list(set(selection))
+    n = 20
+    def round_n(x): return round(x / n) * n
+    lefts = {k: (round_n(r.top), round_n(r.left))
+             for k, r in rects if k is not None}
+    selection = tuple(sorted(selection, key=lambda i: lefts[i]))
 
     state = bind(state.ui_selection_region.set(None))
     state = bind(state.selection.set(selection))

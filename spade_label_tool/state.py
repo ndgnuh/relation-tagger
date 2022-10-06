@@ -24,12 +24,12 @@ class State:
     data: Optional[List[Dict]] = None
     data_index: int = 1
     is_running: bool = True
+    selection: Tuple[int] = field(default_factory=tuple)
     ui: UI = UI()
     ui_selection_region: Optional[Tuple[int]] = None
     ui_scroll_x: int = 0
     ui_scroll_y: int = 0
     ui_zoom_factor: int = 20
-    selection: Tuple[int] = field(default_factory=tuple)
 
     @property
     def current_data(self):

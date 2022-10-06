@@ -67,7 +67,6 @@ class DrawContext(dict):
             ratio = min_height / current_min_height
             boxes[[0, 2]] *= ratio
             boxes[[1, 3]] *= ratio
-        boxes = round_to_unit(boxes, 5)
         boxes = boxes.round().astype(int).T
         texts = current_data.texts
 
@@ -81,16 +80,22 @@ class DrawContext(dict):
             x1, y1, x2, y2 = (box + scroll_offset)
             rect = pygame.Rect(x1, y1, x2 - x1, y2 - y1)
             btn = pygame_gui.elements.UIButton(relative_rect=rect,
-                                               text=text,
+                                               text=str(text),
+                                               tool_tip_text=f"Text: `{text}`",
                                                visible=y1 >= 30,
                                                # container=container,
                                                manager=self.manager)
+            btn.tool_tip_delay = 0.5
             btn.id = "dynamic/textbox"
             btn.index = i
-            if i in selection:
-                btn.select()
+            btn.rebuild()
             buttons.append(btn)
 
+        for si, i in enumerate(selection):
+            btn = buttons[i]
+            btn.text = f"[{si}] {btn.text}"
+            btn.rebuild()
+            btn.select()
         self.refs['data_buttons'] = buttons
 
     def draw(self, state):
