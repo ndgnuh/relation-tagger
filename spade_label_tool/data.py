@@ -44,9 +44,9 @@ def converge_data(data: Dict):
     boxes_normalized = np.stack([xmin / width, ymin / height,
                                  xmax / width, ymax / height], axis=0)
 
-    return Data(texts=tuple(texts),
+    return dict(texts=texts,
                 boxes=boxes,
                 boxes_normalized=boxes_normalized,
                 width=width,
                 height=height,
-                edge_index=tuple())
+                edge_index=[])

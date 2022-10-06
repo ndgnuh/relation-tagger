@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Dict, Any, Tuple, List
 from functools import cache, lru_cache
-from spade_label_tool.utils import memoize
+from spade_label_tool.utils import memoize, get_rect
+from spade_label_tool.utils.edges import find_endpoints
 import pygame_gui
 import pygame
 import numpy as np
@@ -38,11 +39,49 @@ class DrawContext(dict):
         for btn in refs.get("data_buttons", []):
             btn.kill()
 
-    @memoize(maxsize=1)
-    def draw_current_data_edge(self,
-                               positions,
-                               edge_index):
-        pass
+    # @memoize(maxsize=1)
+    def draw_current_data_edge(self, current_data):
+        if current_data is None:
+            return
+
+        edge_index = current_data['edge_index']
+        buttons = self.refs['data_buttons']
+        for i, j in edge_index:
+            btn1 = buttons[i]
+            btn2 = buttons[j]
+            if not btn1.visible or not btn2.visible:
+                continue
+            box1 = btn1.relative_rect
+            box2 = btn2.relative_rect
+            try:
+                p1, p2 = find_endpoints(box1, box2)
+                pygame.draw.line(self.root, (255, 255, 255), p1, p2, 2)
+            except Exception:
+                import traceback
+                traceback.print_exc()
+
+    @memoize()
+    def get_display_position(self,
+                             boxes,
+                             width, height,
+                             scroll_x, scroll_y,
+                             zoom_factor):
+        boxes[[0, 2]] *= width
+        boxes[[1, 3]] *= width
+
+        min_height = zoom_factor
+        current_min_height = (boxes[3] - boxes[1]).min()
+        if min_height > current_min_height:
+            ratio = min_height / current_min_height
+            boxes[[0, 2]] *= ratio
+            boxes[[1, 3]] *= ratio
+        boxes = boxes.round().astype(int).T
+
+        scroll_offset = np.array(
+            [scroll_x, scroll_y, scroll_x, scroll_y], dtype=int)
+
+        boxes = boxes + scroll_offset[None, :]
+        return boxes
 
     @memoize(maxsize=1)
     def draw_current_data(self,
@@ -56,32 +95,19 @@ class DrawContext(dict):
         if current_data is None:
             return
 
+        print("Redraw", current_data['edge_index'])
         self.clear()
 
-        # container = pygame_gui.elements.UIScrollingContainer(
-        #     starting_height=height,
-        #     relative_rect=pygame.Rect(0, 0, width, height),
-        #     manager=self.manager
-        # )
-        # container.set_scrollable_area_dimensions((swidth, sheight))
-        boxes = current_data.boxes_normalized * 1.0
-        boxes[[0, 2]] *= width
-        boxes[[1, 3]] *= width
-
-        min_height = zoom_factor
-        current_min_height = (boxes[3] - boxes[1]).min()
-        if min_height > current_min_height:
-            ratio = min_height / current_min_height
-            boxes[[0, 2]] *= ratio
-            boxes[[1, 3]] *= ratio
-        boxes = boxes.round().astype(int).T
-        texts = current_data.texts
+        boxes = self.get_display_position(
+            current_data['boxes_normalized'] * 1.0,
+            width,
+            height,
+            scroll_x,
+            scroll_y,
+            zoom_factor)
+        texts = current_data['texts']
 
         buttons = []
-        scroll_offset = np.array(
-            [scroll_x, scroll_y, scroll_x, scroll_y], dtype=int)
-
-        boxes = boxes + scroll_offset[None, :]
         for i, (box, text) in enumerate(zip(boxes, texts)):
 
             x1, y1, x2, y2 = box
@@ -104,7 +130,12 @@ class DrawContext(dict):
             btn.rebuild()
             btn.select()
 
-        self.draw_current_data_edge(boxes, current_data.edge_index)
+        for i, j in current_data['edge_index']:
+            b1 = buttons[i].relative_rect
+            b2 = buttons[j].relative_rect
+            pygame.draw.line(self.root, (255, 0, 0),
+                             b1.center, b2.center)
+        # self.draw_current_data_edge(boxes, current_data['edge_index'])
         self.refs['data_buttons'] = buttons
 
     def draw(self, state):
@@ -118,3 +149,4 @@ class DrawContext(dict):
             state.ui_scroll_y.get(),
             state.ui_zoom_factor.get(),
         )
+        self.draw_current_data_edge(state.current_data.get())

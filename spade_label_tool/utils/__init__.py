@@ -1,6 +1,7 @@
 from spade_label_tool.utils.functables import *
 from spade_label_tool.utils.cache import memoize, custom_hash
 import json
+import pygame
 
 
 def read_jsonl(path: str):
@@ -14,3 +15,7 @@ def read_jsonl(path: str):
         data = None
         error = e
     return data, error
+
+
+def get_rect(x1, y1, x2, y2):
+    return pygame.Rect(x1, y1, x2 - x1, y2-y1)

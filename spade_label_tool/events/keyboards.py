@@ -15,7 +15,6 @@ def change_data_index(state, delta: int):
     data_index = data_index + delta
     data_index = max(data_index, 0)
     data_index = min(data_index, len(data) - 1)
-    print(state.data_index.get(), '->', data_index)
     state = bind(state.data_index.set(data_index))
 
     return state
@@ -30,7 +29,7 @@ def prev_index(event, state):
 def add_edges(event, state):
     data_index = state.data_index.get()
     selection = state.selection.get()
-    edge_index = state.current_data.edge_index.get()
+    edge_index = state.current_data['edge_index'].get()
     if edge_index is None:
         return state
 
@@ -40,9 +39,9 @@ def add_edges(event, state):
     new_edge_index = tuple(zip(selection, selection[1:]))
     edge_index = set([*edge_index, *new_edge_index])
     edge_index = tuple(edge_index)
-    print(edge_index)
-    state = bind(state.data[data_index].edge_index.set(edge_index))
-    return change_data_index(state, -1)
+    state = bind(state.data[data_index]['edge_index'].set(edge_index))
+    state = bind(state.selection.set(tuple()))
+    return state
 
 
 @callbacks(pygame.K_d)
@@ -50,14 +49,9 @@ def next_index(event, state):
     return change_data_index(state, 1)
 
 
-print(callbacks)
-
-
 def handle_keyboard(event, state):
-    print(event)
     f = callbacks.get(event.key, None)
     if f is None:
         return state
-    print("f is", f)
 
     return f(event, state)

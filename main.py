@@ -64,7 +64,7 @@ def main():
     clock = pg.time.Clock()
     static_ui.draw(manager)
     while state.is_running.get():
-        time_delta = clock.tick(30) / 5000.0
+        time_delta = clock.tick(60) / 1000.0
         for event in pg.event.get():
             dui.manager.process_events(event)
             state = handle_event(event, state)
@@ -73,10 +73,11 @@ def main():
         background = pg.Surface(root_sf.get_size())
         background.fill(pg.Color(31, 31, 31))
         root_sf.blit(background, (0, 0))
-        dui.draw(state)
         # print('container', vars(state.ui.manager.get().root_container))
 
         manager.draw_ui(root_sf)
+        dui.draw(state)
+        # pg.draw.line(root_sf, (255, 255, 255), (0, 0), (200, 200), )
         pg.display.update()
 
 
