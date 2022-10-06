@@ -14,11 +14,7 @@ from spade_label_tool.events import (
 
 
 def handle_resize(event, state):
-    manager = state.ui_manager.get()
-    manager.set_window_resolution((event.w, event.h))
-    state = bind(state.ui_window_width.set(event.w))
-    state = bind(state.ui_window_height.set(event.h))
-    return state
+    return state.call('set_window_resolution', event.w, event.h)
 
 
 def handle_event(event, state):
@@ -40,7 +36,7 @@ def handle_event(event, state):
     #     print('unk', event)
 
     if event.type == pg.QUIT:
-        state = State.stop(state)
+        state = state.call('stop')
 
     handler = event_type_dispatch.get(event.type, None)
     if handler is not None:
