@@ -1,12 +1,36 @@
 from spade_label_tool.utils import Functables
-from pygame_gui.windows.ui_file_dialog import (
+from pygame_gui.windows import (
     UIFileDialog,
-    UIConfirmationDialog
+    UIMessageWindow,
 )
 import pygame
 from lenses import bind
 
 button_callbacks = Functables()
+
+
+@button_callbacks("menu/save")
+def _(event, state):
+    data = state.data.get()
+    ui_manager = state.ui.manager.get()
+    ww = state.ui.window_width.get()
+    wh = state.ui.window_height.get()
+    xpad = ww // 10
+    ypad = wh // 10
+    rect = pygame.Rect(xpad, ypad, ww - 2 * xpad, wh - 2 * ypad)
+
+    if data is None:
+        UIMessageWindow(html_message="No data to save",
+                        manager=state.ui.manager.get(),
+                        rect=rect)
+        return state
+
+    picker = UIFileDialog(rect=rect,
+                          allow_picking_directories=False,
+                          allow_existing_files_only=False,
+                          manager=ui_manager)
+    picker.id = 'picker/save'
+    return state
 
 
 @button_callbacks("menu/load")
@@ -39,9 +63,8 @@ def textbox_select(event, state):
 
 
 def event_handler(event, state):
-    print('event', event)
+    print('event', event.ui_element)
     btn_id = getattr(event.dict['ui_element'], "id", None)
-    print('btn_id', btn_id)
     if btn_id is None:
         print(event.dict['ui_element'], "has no button id")
         return state

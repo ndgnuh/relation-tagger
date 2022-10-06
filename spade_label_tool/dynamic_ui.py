@@ -120,7 +120,6 @@ class DrawContext(dict):
                                                text=text,
                                                tool_tip_text=f"Text: `{text}`",
                                                visible=y1 >= 30,
-                                               # container=container,
                                                manager=self.manager)
             btn.tool_tip_delay = 0.5
             btn.id = "dynamic/textbox"

@@ -1,20 +1,56 @@
 from spade_label_tool.utils.functables import *
 from spade_label_tool.utils.cache import memoize, custom_hash
+from pygame_gui.windows import UIMessageWindow
 import json
 import pygame
 
 
+def safe_call(func):
+    def wrapper(*args, **kwds):
+        try:
+            result = func(*args, **kwds)
+            return result, None
+        except Exception as e:
+            return None, e
+    return wrapper
+
+
+@safe_call
 def read_jsonl(path: str):
-    try:
-        with open(path, encoding="utf-8") as f:
-            lines = [line.strip() for line in f.readlines()]
-            lines = [line for line in lines if len(line) > 0]
-        data = [json.loads(line) for line in lines]
-        error = None
-    except Exception as e:
-        data = None
-        error = e
-    return data, error
+    with open(path, encoding="utf-8") as f:
+        lines = [line.strip() for line in f.readlines()]
+        lines = [line for line in lines if len(line) > 0]
+    data = [json.loads(line) for line in lines]
+    return data
+
+
+@safe_call
+def write_jsonl(path: str, data):
+    def serialize(d):
+        out = dict()
+        out['texts'] = d['texts']
+        out['boxes'] = d['boxes'].tolist()
+        out['edge_index'] = list(d['edge_index'])
+        out['width'] = d['width']
+        out['height'] = d['height']
+        return out
+    wdata = list(map(serialize, data))
+    data_str = json.dumps(wdata)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(data_str)
+
+
+def write_jsonl_ui(state, path, data):
+    manager = state.ui.manager.get()
+    data, error = write_jsonl(path, data)
+    if error:
+        UIMessageWindow(html_message=f"Error {error}",
+                        manager=manager,
+                        rect=pygame.Rect(0, 0, 200, 300))
+    else:
+        UIMessageWindow(html_message="Success",
+                        manager=manager,
+                        rect=pygame.Rect(0, 0, 200, 300))
 
 
 def get_rect(x1, y1, x2, y2):

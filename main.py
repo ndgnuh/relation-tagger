@@ -11,7 +11,9 @@ from spade_label_tool.events import (
     handle_buttons,
     handle_pickers,
     handle_mouse,
-    handle_keyboard)
+    handle_keyboard,
+    handle_confirmations
+)
 
 
 def handle_resize(event, state):
@@ -33,11 +35,12 @@ def handle_event(event, state):
         pg.MOUSEWHEEL: handle_mouse,
         # pg.KEYDOWN: handle_keyboard,
         pg.KEYUP: handle_keyboard,
+        pgui.UI_CONFIRMATION_DIALOG_CONFIRMED: handle_confirmations,
         pgui.UI_BUTTON_PRESSED: handle_buttons,
         pgui.UI_FILE_DIALOG_PATH_PICKED: handle_pickers,
     }
     # if event.type not in event_type_dispatch:
-    #     print(event)
+    #     print('unk', event)
 
     if event.type == pg.QUIT:
         state = State.stop(state)
@@ -66,7 +69,6 @@ def main():
     while state.is_running.get():
         time_delta = clock.tick(60) / 1000.0
         for event in pg.event.get():
-            dui.manager.process_events(event)
             state = handle_event(event, state)
 
         manager.update(time_delta)
