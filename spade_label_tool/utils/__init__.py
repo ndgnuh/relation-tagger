@@ -48,7 +48,7 @@ def write_jsonl_ui(state, path, data):
                         manager=manager,
                         rect=pygame.Rect(0, 0, 200, 300))
     else:
-        UIMessageWindow(html_message="Success",
+        UIMessageWindow(html_message=f"Success, data to {path}",
                         manager=manager,
                         rect=pygame.Rect(0, 0, 200, 300))
 

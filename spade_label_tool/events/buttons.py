@@ -5,48 +5,13 @@ from pygame_gui.windows import (
 )
 import pygame
 from lenses import bind
+from spade_label_tool import features
 
 button_callbacks = Functables()
 
 
-@button_callbacks("menu/save")
-def _(event, state):
-    data = state.data.get()
-    ui_manager = state.ui.manager.get()
-    ww = state.ui.window_width.get()
-    wh = state.ui.window_height.get()
-    xpad = ww // 10
-    ypad = wh // 10
-    rect = pygame.Rect(xpad, ypad, ww - 2 * xpad, wh - 2 * ypad)
-
-    if data is None:
-        UIMessageWindow(html_message="No data to save",
-                        manager=state.ui.manager.get(),
-                        rect=rect)
-        return state
-
-    picker = UIFileDialog(rect=rect,
-                          allow_picking_directories=False,
-                          allow_existing_files_only=False,
-                          manager=ui_manager)
-    picker.id = 'picker/save'
-    return state
-
-
-@button_callbacks("menu/load")
-def _(event, state):
-    ui_manager = state.ui.manager.get()
-    ww = state.ui.window_width.get()
-    wh = state.ui.window_height.get()
-    xpad = ww // 10
-    ypad = wh // 10
-    rect = pygame.Rect(xpad, ypad, ww - 2 * xpad, wh - 2 * ypad)
-    picker = UIFileDialog(rect=rect,
-                          allow_picking_directories=False,
-                          allow_existing_files_only=True,
-                          manager=ui_manager)
-    picker.id = 'picker/load'
-    return state
+button_callbacks("menu/save", features.init_save_file)
+button_callbacks("menu/load", features.init_load_file)
 
 
 @button_callbacks("dynamic/textbox")

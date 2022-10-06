@@ -2,6 +2,7 @@ from spade_label_tool.utils import Functables
 from lenses import bind
 import pygame
 from itertools import product
+from spade_label_tool import features
 
 callbacks = Functables()
 
@@ -23,6 +24,20 @@ def change_data_index(state, delta: int):
 @callbacks(pygame.K_a)
 def prev_index(event, state):
     return change_data_index(state, -1)
+
+
+@callbacks(pygame.K_s)
+def key_s(event, state):
+    if pygame.key.get_mods() & pygame.KMOD_CTRL:
+        return features.init_save_file(event, state)
+    return state
+
+
+@callbacks(pygame.K_o)
+def key_o(event, state):
+    if pygame.key.get_mods() & pygame.KMOD_CTRL:
+        return features.init_load_file(event, state)
+    return state
 
 
 @callbacks(pygame.K_r)
