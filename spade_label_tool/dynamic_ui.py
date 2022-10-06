@@ -10,6 +10,10 @@ import numpy as np
 module_state: Dict = dict(buttons=[])
 
 
+def format_text(s):
+    return f"<font face='sans'>{s}</font>"
+
+
 def round_to_unit(x, n):
     return np.round(x / n) * n
 
@@ -93,7 +97,7 @@ class DrawContext(dict):
         if current_data is None:
             return
 
-        print("Redraw", current_data['edge_index'])
+        # print("Redraw", current_data['edge_index'])
         self.clear()
 
         boxes = self.get_display_position(
@@ -110,8 +114,10 @@ class DrawContext(dict):
 
             x1, y1, x2, y2 = box
             rect = pygame.Rect(x1, y1, x2 - x1, y2 - y1)
+            # text = format_text(text)
             btn = pygame_gui.elements.UIButton(relative_rect=rect,
-                                               text=str(text),
+                                               object_id="#text-node",
+                                               text=text,
                                                tool_tip_text=f"Text: `{text}`",
                                                visible=y1 >= 30,
                                                # container=container,

@@ -1,0 +1,26 @@
+{
+	"#text-node": {
+		"font": {
+			"name": "Play",
+			"size": "9",
+			"bold": "0",
+			"italic": "0",
+			"regular_path": "./fonts/Play-Regular.ttf"
+		},
+		"misc": {
+			"border_width": "1",
+			"shadow_width": "0",
+			"tool_tip_delay": "0.3",
+			"text_horiz_alignment": "center",
+			"text_vert_alignment": "center",
+			"text_horiz_alignment_padding": "0",
+			"text_vert_alignment_padding": "0",
+			"text_shadow_size": "0",
+			"text_shadow_offset": "0,0",
+			"state_transitions": {
+				"normal_hovered": "0.5",
+				"hovered_normal": "0.5"
+			}
+		}
+	}
+}

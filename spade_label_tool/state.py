@@ -128,6 +128,7 @@ def load_labels(state, labelfile):
 
 
 def create_ui_manager(state, root):
-    manager = pgui.UIManager(root.get_size())
+    manager = pgui.UIManager(
+        root.get_size(), "theme.json", starting_language="vi")
     state = state.ui.manager.set(manager)
     return bind(state)
