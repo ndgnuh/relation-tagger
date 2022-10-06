@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Dict, Any, Tuple, List
-from functools import cache
+from functools import cache, lru_cache
 import pygame_gui
 import pygame
 
@@ -24,7 +24,7 @@ class DrawContext(dict):
     def __hash__(self):
         return id(self)
 
-    @cache
+    @lru_cache(maxsize=1)
     def draw_current_data(self,
                           current_data,
                           selection,
