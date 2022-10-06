@@ -9,11 +9,11 @@ from lenses import bind
 
 def init_save_file(event, state):
     data = state.data.get()
-    ui_manager = state.ui.manager.get()
+    ui_manager = state.ui_manager.get()
     rect = state.dialog_rect.get()
     if data is None:
         UIMessageWindow(html_message="No data to save",
-                        manager=state.ui.manager.get(),
+                        manager=state.ui_manager.get(),
                         rect=rect)
         return state
 
@@ -26,7 +26,7 @@ def init_save_file(event, state):
 
 
 def init_load_file(event, state):
-    ui_manager = state.ui.manager.get()
+    ui_manager = state.ui_manager.get()
     rect = state.dialog_rect.get()
     picker = UIFileDialog(rect=rect,
                           allow_picking_directories=False,

@@ -66,7 +66,7 @@ def scroll(event, state):
 
 @callbacks((pygame.MOUSEBUTTONUP, pygame.BUTTON_LEFT))
 def select_region(event, state):
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
     region = state.ui_selection_region.get()
     selection = state.selection.get()
 

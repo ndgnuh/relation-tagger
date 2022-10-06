@@ -2,6 +2,7 @@
 import pygame as pg
 import pygame_gui as pgui
 import json
+import pygame_gui
 import pygame
 from lenses import lens, bind
 from dataclasses import dataclass, field
@@ -26,7 +27,11 @@ class State:
     data_index: int = 1
     is_running: bool = True
     selection: Tuple[int] = field(default_factory=tuple)
-    ui: UI = UI()
+
+    # UI
+    ui_manager: pygame_gui.UIManager = None
+    ui_window_width: int = 0
+    ui_window_height: int = 0
     ui_selection_region: Optional[Tuple[int]] = None
     ui_scroll_x: int = 0
     ui_scroll_y: int = 0
@@ -41,8 +46,8 @@ class State:
 
     @property
     def dialog_rect(self):
-        ww = self.ui.window_width
-        wh = self.ui.window_height
+        ww = self.ui_window_width
+        wh = self.ui_window_height
         xpad = ww // 10
         ypad = wh // 10
         rect = pygame.Rect(xpad, ypad, ww - 2 * xpad, wh - 2 * ypad)
@@ -92,7 +97,7 @@ def load_data(state, datafile):
     state = bind(state.data.dataindex.set(0))
 
     # UI state
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
     cbboxes = bboxes[0]
     ctexts = texts[0]
     buttons = []
@@ -106,7 +111,7 @@ def load_data(state, datafile):
             manager=manager
         )
         buttons.append(button)
-    state = setui(state.ui.button_texts, buttons)
+    state = setui(state.ui_button_texts, buttons)
     state = bind(state)
     return state
 
@@ -124,7 +129,7 @@ def load_labels(state, labelfile):
     buttons = []
     y = 50
     height = 50
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
     for label in labels:
         button = pgui.elements.UIButton(
             relative_rect=pg.Rect(0, y, 200, height),
@@ -132,7 +137,7 @@ def load_labels(state, labelfile):
             manager=manager)
         y = y + height
         buttons.append(button)
-    state = setui(state.ui.button_labels, buttons)
+    state = setui(state.ui_button_labels, buttons)
     state = bind(state)
     return state
 
@@ -140,5 +145,5 @@ def load_labels(state, labelfile):
 def create_ui_manager(state, root):
     manager = pgui.UIManager(
         root.get_size(), "theme.json", starting_language="vi")
-    state = state.ui.manager.set(manager)
+    state = state.ui_manager.set(manager)
     return bind(state)

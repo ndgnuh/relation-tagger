@@ -41,7 +41,7 @@ def write_jsonl(path: str, data):
 
 
 def write_jsonl_ui(state, path, data):
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
     rect = state.dialog_rect.get()
     data, error = write_jsonl(path, data)
     if error:

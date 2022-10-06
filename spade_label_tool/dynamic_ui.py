@@ -140,8 +140,8 @@ class DrawContext(dict):
         self.draw_current_data(
             state.current_data.get(),
             state.selection.get(),
-            state.ui.window_width.get(),
-            state.ui.window_height.get(),
+            state.ui_window_width.get(),
+            state.ui_window_height.get(),
             state.ui_scroll_x.get(),
             state.ui_scroll_y.get(),
             state.ui_zoom_factor.get(),

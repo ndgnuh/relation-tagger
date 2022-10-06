@@ -1,9 +1,6 @@
-from spade_label_tool import (
-    state as State,
-    dynamic_ui
-)
+from spade_label_tool.state import State
 from lenses import bind
-from spade_label_tool import static_ui
+from spade_label_tool import static_ui, dynamic_ui
 import pygame_gui as pgui
 import pygame as pg
 from pygame.locals import *
@@ -17,15 +14,15 @@ from spade_label_tool.events import (
 
 
 def handle_resize(event, state):
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
     manager.set_window_resolution((event.w, event.h))
-    state = bind(state.ui.window_width.set(event.w))
-    state = bind(state.ui.window_height.set(event.h))
+    state = bind(state.ui_window_width.set(event.w))
+    state = bind(state.ui_window_height.set(event.h))
     return state
 
 
 def handle_event(event, state):
-    manager = state.ui.manager.get()
+    manager = state.ui_manager.get()
 
     event_type_dispatch = {
         pg.VIDEORESIZE: handle_resize,
@@ -54,32 +51,30 @@ def handle_event(event, state):
 
 
 def main():
-    state = State.create_state()
     pg.init()
     pg.display.set_caption("Spade label tool")
-    root_sf = pg.display.set_mode((800, 600), RESIZABLE)
-    state = State.create_ui_manager(state, root_sf)
-    state = bind(state.ui.window_width.set(root_sf.get_width()))
-    state = bind(state.ui.window_height.set(root_sf.get_height()))
-    manager = state.ui.manager.get()
+    root = pg.display.set_mode((800, 600), RESIZABLE)
+    ui_manager = pgui.UIManager(root.get_size(), "theme.json")
+    state = bind(State(ui_manager=ui_manager))
+    state = bind(state.ui_window_width.set(root.get_width()))
+    state = bind(state.ui_window_height.set(root.get_height()))
 
-    dui = dynamic_ui.DrawContext(root=root_sf, manager=manager)
+    dui = dynamic_ui.DrawContext(root=root, manager=ui_manager)
     clock = pg.time.Clock()
-    static_ui.draw(manager)
+    static_ui.draw(ui_manager)
     while state.is_running.get():
         time_delta = clock.tick(60) / 1000.0
         for event in pg.event.get():
             state = handle_event(event, state)
 
-        manager.update(time_delta)
-        background = pg.Surface(root_sf.get_size())
+        ui_manager.update(time_delta)
+        background = pg.Surface(root.get_size())
         background.fill(pg.Color(31, 31, 31))
-        root_sf.blit(background, (0, 0))
-        # print('container', vars(state.ui.manager.get().root_container))
+        root.blit(background, (0, 0))
 
-        manager.draw_ui(root_sf)
+        ui_manager.draw_ui(root)
         dui.draw(state)
-        # pg.draw.line(root_sf, (255, 255, 255), (0, 0), (200, 200), )
+        # pg.draw.line(root, (255, 255, 255), (0, 0), (200, 200), )
         pg.display.update()
 
 

@@ -14,7 +14,7 @@ def load(event, state):
     if data is None:
         rect = Rect(0, 0, 1000, 1000)
         UIMessageWindow(html_message=f"Error {error}",
-                        manager=state.ui.manager.get(),
+                        manager=state.ui_manager.get(),
                         rect=rect)
 
     else:
@@ -35,7 +35,7 @@ def save(event, state):
     data = state.data.get()
     rect = Rect(0, 0, 1000, 1000)
     if path.isfile(filepath):
-        confirm_save_file = UIConfirmationDialog(manager=state.ui.manager.get(),
+        confirm_save_file = UIConfirmationDialog(manager=state.ui_manager.get(),
                                                  action_long_desc=f"Overwrite {filepath}",
                                                  rect=rect)
         confirm_save_file.action = "save_data"
