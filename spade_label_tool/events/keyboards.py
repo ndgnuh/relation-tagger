@@ -25,6 +25,32 @@ def prev_index(event, state):
     return change_data_index(state, -1)
 
 
+@callbacks(pygame.K_r)
+def clear_edges(event, state):
+    data_index = state.data_index.get()
+    selection = state.selection.get()
+    edge_index = state.current_data['edge_index'].get()
+    if edge_index is None:
+        return state
+
+    if len(selection) == 0:
+        return state
+    if event.mod & pygame.KMOD_SHIFT:
+        # Clear all
+        edge_index = [(i, j) for (i, j) in edge_index
+                      if i not in selection and j not in selection]
+    else:
+        edge_index = set(edge_index)  # use set to remove without error
+        for i, j in zip(selection, selection[1:]):
+            edge_index.discard((i, j))
+            edge_index.discard((j, i))
+    edge_index = tuple(edge_index)
+
+    state = bind(state.data[data_index]['edge_index'].set(edge_index))
+    state = bind(state.selection.set(tuple()))
+    return state
+
+
 @callbacks(pygame.K_SPACE)
 def add_edges(event, state):
     data_index = state.data_index.get()
@@ -36,8 +62,13 @@ def add_edges(event, state):
     if len(selection) == 0:
         return state
 
-    new_edge_index = tuple(zip(selection, selection[1:]))
-    edge_index = set([*edge_index, *new_edge_index])
+    new_edge_index = [e for e in zip(selection, selection[1:])
+                      if e not in edge_index]
+    rem_edge_index = [e for e in zip(selection, selection[1:])
+                      if e in edge_index]
+
+    edge_index = list(edge_index) + new_edge_index
+    edge_index = [e for e in edge_index if e not in rem_edge_index]
     edge_index = tuple(edge_index)
     state = bind(state.data[data_index]['edge_index'].set(edge_index))
     state = bind(state.selection.set(tuple()))

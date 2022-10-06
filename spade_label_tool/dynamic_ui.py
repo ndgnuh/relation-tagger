@@ -53,19 +53,17 @@ class DrawContext(dict):
                 continue
             box1 = btn1.relative_rect
             box2 = btn2.relative_rect
-            try:
-                p1, p2 = find_endpoints(box1, box2)
-                pygame.draw.line(self.root, (255, 255, 255), p1, p2, 2)
-            except Exception:
-                import traceback
-                traceback.print_exc()
+            p1, p2 = find_endpoints(box1, box2)
+            pygame.draw.line(self.root, (255, 255, 255), p1, p2, 2)
 
     @memoize()
     def get_display_position(self,
-                             boxes,
-                             width, height,
-                             scroll_x, scroll_y,
-                             zoom_factor):
+                             boxes: np.ndarray,
+                             width: int,
+                             height: int,
+                             scroll_x: int,
+                             scroll_y: int,
+                             zoom_factor: float):
         boxes[[0, 2]] *= width
         boxes[[1, 3]] *= width
 
@@ -130,12 +128,6 @@ class DrawContext(dict):
             btn.rebuild()
             btn.select()
 
-        for i, j in current_data['edge_index']:
-            b1 = buttons[i].relative_rect
-            b2 = buttons[j].relative_rect
-            pygame.draw.line(self.root, (255, 0, 0),
-                             b1.center, b2.center)
-        # self.draw_current_data_edge(boxes, current_data['edge_index'])
         self.refs['data_buttons'] = buttons
 
     def draw(self, state):
