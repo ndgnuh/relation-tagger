@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, Any, Tuple, List
 from functools import cache, lru_cache
+from spade_label_tool.utils import memoize
 import pygame_gui
 import pygame
 import numpy as np
@@ -37,7 +38,13 @@ class DrawContext(dict):
         for btn in refs.get("data_buttons", []):
             btn.kill()
 
-    @lru_cache(maxsize=1)
+    @memoize(maxsize=1)
+    def draw_current_data_edge(self,
+                               positions,
+                               edge_index):
+        pass
+
+    @memoize(maxsize=1)
     def draw_current_data(self,
                           current_data,
                           selection,
@@ -74,10 +81,10 @@ class DrawContext(dict):
         scroll_offset = np.array(
             [scroll_x, scroll_y, scroll_x, scroll_y], dtype=int)
 
-        print(scroll_x, scroll_y)
+        boxes = boxes + scroll_offset[None, :]
         for i, (box, text) in enumerate(zip(boxes, texts)):
 
-            x1, y1, x2, y2 = (box + scroll_offset)
+            x1, y1, x2, y2 = box
             rect = pygame.Rect(x1, y1, x2 - x1, y2 - y1)
             btn = pygame_gui.elements.UIButton(relative_rect=rect,
                                                text=str(text),
@@ -96,6 +103,8 @@ class DrawContext(dict):
             btn.text = f"[{si}] {btn.text}"
             btn.rebuild()
             btn.select()
+
+        self.draw_current_data_edge(boxes, current_data.edge_index)
         self.refs['data_buttons'] = buttons
 
     def draw(self, state):
