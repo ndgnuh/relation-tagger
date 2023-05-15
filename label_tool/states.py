@@ -3,27 +3,38 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import *
 
-
-@lru_cache
-def read_label(dataset_file: str) -> List[str]:
-    with open(dataset_file, "r") as fp:
-        data = json.load(fp)
+from .widgets.node_editor import NodeEditor
+from .data import Dataset
 
 
 @lru_cache
-def read_data(dataset_file: str) -> Dict:
+def read_data(dataset_file: str) -> Dataset:
     with open(dataset_file, "r") as fp:
         data = json.load(fp)
-    return data
+    return Dataset.from_dict(data)
 
 
-@dataclass
+@lru_cache
+def create_node_editor(dataset: Dataset):
+    if dataset is None:
+        return
+    sample = dataset.get_current_sample()
+    return NodeEditor(sample.texts, sample.boxes, sample.links)
+
+
+@ dataclass
 class State:
-    resolve_error: Callable = lambda: None
-    error: Optional[Error] = None
+    error: Optional[str] = None
     dataset_file: Optional[str] = None
 
-    @property
+    def resolve_error(self):
+        pass
+
+    @ property
+    def node_editor(self):
+        return create_node_editor(self.dataset)
+
+    @ property
     def dataset(self):
         if self.dataset_file is None:
             return None

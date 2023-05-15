@@ -1,0 +1,21 @@
+{
+	"classes": ["name", "phone", "email", "address"],
+	"samples": [
+		{
+			"texts": ["Bully Maguire", "Tobey", "Pizza"],
+			"boxes": [
+				[100, 0],
+				[400, 200],
+				[200, 200]
+			]
+		},
+		{
+			"texts": ["Apple", "Banana", "Crap"],
+			"boxes": [
+				[100, 0],
+				[400, 200],
+				[200, 200]
+			]
+		}
+	]
+}

@@ -19,15 +19,21 @@ class Configuration:
 
         return cls(**options)
 
+    def __hash__(self):
+        return hash(tuple(tuple(v) for v in vars.self.items()))
 
-@dataclass
+
+@dataclass(eq=True)
 class Sample(Configuration):
     texts: List[str]
     boxes: List[Tuple[int, int]]
     links: List[Tuple[int, int]] = field(default_factory=list)
 
+    def __hash__(self):
+        return id(self)
 
-@ dataclass
+
+@dataclass(eq=True)
 class Dataset(Configuration):
     classes: List[str]
     samples: List[Sample]
@@ -35,6 +41,12 @@ class Dataset(Configuration):
 
     def __post_init__(self):
         self.samples = [Sample.from_dict(s) for s in self.samples]
+
+    def __hash__(self):
+        return hash((id(self), self.idx))
+
+    def get_current_sample(self):
+        return self.samples[self.idx]
 
 
 if __name__ == "__main__":

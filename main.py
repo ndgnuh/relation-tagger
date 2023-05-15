@@ -1,15 +1,18 @@
+import random
+from itertools import product
 from imgui_bundle import imgui, immapp
 from imgui_bundle import im_file_dialog as fd
 from demo import demo_imfile_dialog
 from label_tool.widgets.filepicker import pick_open_file
 from label_tool.states import State
+from label_tool.widgets.node_editor import NodeEditor
 
 
 def main(state):
     if state.dataset:
         imgui.text(f"Selected data: {state.dataset_file}")
 
-    if state.error is not None:
+    if isinstance(state.error, str):
         imgui.set_next_window_size(imgui.ImVec2(500, 120))
         imgui.begin("Error")
         imgui.text(state.error)
@@ -22,6 +25,13 @@ def main(state):
         state.dataset_file = selected_dataset
         print(selected_dataset)
 
+    if state.node_editor is not None:
+        imgui.same_line()
+        imgui.begin_group()
+        state.node_editor.on_frame()
+        imgui.end_group()
+
 
 state = State(0)
-immapp.run(gui_function=lambda: main(state))
+immapp.run(gui_function=lambda: main(state),
+           with_node_editor=True)
