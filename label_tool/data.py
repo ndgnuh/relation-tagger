@@ -29,6 +29,11 @@ class Sample(BaseModel):
     texts: List[str]
     boxes: List[Polygon]
     links: Set[Tuple[int, int]] = Field(default_factory=set)
+
+    # classes is modelled as dict because not all node will have classes
+    classes: Dict[int, int] = Field(default_factory=dict)
+
+    # unused for now
     image_width: int = 100
     image_height: int = 100
     image_base64: str = ""

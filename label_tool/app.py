@@ -7,7 +7,7 @@ from .widgets.filepicker import pick_open_file
 from .states import State
 from .widgets.node_editor import NodeEditor
 from .widgets.dirty_indicator import dirty_indicator, save_button
-from .widgets.datastatus import datastatus
+from .widgets.datastatus import datastatus, label_selector
 from .shortcuts import Shortcut
 
 thisdir = path.dirname(__file__)
@@ -16,7 +16,24 @@ thisdir = path.dirname(__file__)
 def gui(state):
     try:
         root_width, root_height = imgui.get_window_size()
-        datastatus(state)
+
+        # Status bar
+
+        # Render menu bar 
+        imgui.begin("Main")
+        if imgui.begin_main_menu_bar():
+            # File menu
+            if imgui.begin_menu('File', True):
+                clicked = imgui.menu_item('Import', 'Ctrl+O', False, True)
+                clicked = imgui.menu_item('Save', 'Ctrl+S', False, True)
+                imgui.end_menu()
+
+            # Datastatus
+            imgui.same_line()
+            imgui.separator()
+            datastatus(state)
+        imgui.end_main_menu_bar()
+        imgui.end()
 
         if isinstance(state.error, str):
             imgui.set_next_window_size(
@@ -30,6 +47,7 @@ def gui(state):
 
         state.checkpoint()
         imgui.begin_group()
+        imgui.dummy(imgui.ImVec2(0, 30))
         selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
         if selected_dataset:
             state.dataset_file = selected_dataset
@@ -40,8 +58,10 @@ def gui(state):
             imgui.same_line()
             imgui.begin_group()
             state.node_editor.on_frame()
+            label_selector(state)
             imgui.end_group()
 
+        # handle shortcut
         Shortcut.on_frame(state)
     except Exception as e:
         import traceback

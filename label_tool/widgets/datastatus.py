@@ -8,9 +8,16 @@ def datastatus(state: State):
     dataset_file = state.dataset_file
 
     messages = [
+        "Data:",
         "*" if dataset.dirty else "",
         f"[{1 + dataset.idx}/{len(dataset)}] {dataset_file}",
     ]
     for message in messages:
         imgui.same_line()
         imgui.text(message)
+    return " ".join(messages)
+
+
+@requires(["dataset"])
+def label_selector(state: State):
+    pass
