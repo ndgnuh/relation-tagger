@@ -2,14 +2,14 @@ import random
 from os import path
 from itertools import product
 from dataclasses import dataclass
-from imgui_bundle import imgui, immapp
+from imgui_bundle import imgui, immapp, hello_imgui
 from imgui_bundle import im_file_dialog as fd
 from .widgets.filepicker import pick_open_file
 from .states import State
 from .widgets.node_editor import NodeEditor
 from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
-from .widgets.datastatus import datastatus, label_selector
+from .widgets.datastatus import label_selector
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 
@@ -18,24 +18,27 @@ thisdir = path.dirname(__file__)
 
 def gui(state):
     try:
-        # Render menu bar 
-        menubar_events = draw_menu_bar(state)
 
         root_width, root_height = imgui.get_window_size()
+        menu_height = 30
+        
+        # Menu bar
+        menubar_events = draw_menu_bar(state)
 
         #
         # Left panel
         #
+        imgui.set_next_window_pos(imgui.ImVec2(0, menubar_events.menubar_height))
         imgui.begin("Tools")
-        imgui.set_window_pos(imgui.ImVec2(0, 0))
         imgui.set_window_size(imgui.ImVec2(root_width * 0.2, root_height))
+        label_selector(state)
         imgui.end()
 
         #
         # Main panel
         #
         imgui.begin("Workspace")
-        imgui.set_window_pos(imgui.ImVec2(root_width * 0.2, 0))
+        imgui.set_window_pos(imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height))
         imgui.set_window_size(imgui.ImVec2(root_width * 0.8, root_height))
         # if isinstance(state.error, str):
         #     imgui.set_next_window_size(
@@ -114,8 +117,13 @@ def main():
     runner_params = immapp.RunnerParams()
     runner_params.callbacks.load_additional_fonts = callback_load_font
     runner_params.callbacks.show_gui = run_gui
+    # runner_params.callbacks.show_menus = lambda: draw_menu_bar(state)
 
-    add_ons_params = immapp.AddOnsParams(with_node_editor=True)
+    # runner_params.imgui_window_params.default_imgui_window_type = imgui.Def
+    # runner_params.imgui_window_params.show_menu_bar = True
+    # runner_params.imgui_window_params.enable_viewports = True
+
+    add_ons_params = immapp.AddOnsParams(with_node_editor=True, with_markdown=True)
     immapp.run(runner_params, add_ons_params)
 
 
