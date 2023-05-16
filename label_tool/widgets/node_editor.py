@@ -1,4 +1,5 @@
 import math
+import unicodedata
 from imgui_bundle import imgui, imgui_node_editor as ed, ImVec4
 from dataclasses import dataclass, field
 from typing import List, Set, Tuple, Dict
@@ -33,7 +34,7 @@ class Node:
         return hash((self.text, self.x, self.y))
 
     def draw(self):
-        pin_text = "."
+        pin_text = " "
         ed.begin_node(self.node_id)
 
         ed.begin_pin(self.in_pin, ed.PinKind.input)
@@ -41,7 +42,8 @@ class Node:
         ed.end_pin()
 
         imgui.same_line()
-        imgui.text(self.text)
+        text = unicodedata.normalize('NFC', self.text)
+        imgui.text(text)
 
         imgui.same_line()
         ed.begin_pin(self.out_pin, ed.PinKind.output)
