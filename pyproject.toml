@@ -1,0 +1,11 @@
+[project]
+name = "relation-tagger"
+version = "0.2.0"
+dependencies = [
+	"imgui-bundle",
+	"pydantic",
+	"numpy"
+]
+
+[project.scripts]
+relation-tagger="label_tool.app:main"

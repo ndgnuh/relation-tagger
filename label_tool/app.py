@@ -2,15 +2,14 @@ import random
 from itertools import product
 from imgui_bundle import imgui, immapp
 from imgui_bundle import im_file_dialog as fd
-from demo import demo_imfile_dialog
-from label_tool.widgets.filepicker import pick_open_file
-from label_tool.states import State
-from label_tool.widgets.node_editor import NodeEditor
-from label_tool.widgets.dirty_indicator import dirty_indicator, save_button
-from label_tool.shortcuts import Shortcut
+from .widgets.filepicker import pick_open_file
+from .states import State
+from .widgets.node_editor import NodeEditor
+from .widgets.dirty_indicator import dirty_indicator, save_button
+from .shortcuts import Shortcut
 
 
-def main(state):
+def gui(state):
     try:
         root_width, root_height = imgui.get_window_size()
         if state.dataset:
@@ -31,7 +30,6 @@ def main(state):
         selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
         if selected_dataset:
             state.dataset_file = selected_dataset
-            print(selected_dataset)
         save_button(state)
         imgui.end_group()
 
@@ -47,6 +45,19 @@ def main(state):
         traceback.print_exc()
         state.error = str(e)
 
-state = State(0)
-immapp.run(gui_function=lambda: main(state),
-           with_node_editor=True)
+def main():
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("--data", dest="data")
+
+    args = parser.parse_args()
+
+    state = State(dataset_file=args.data)
+
+    def run_gui():
+        gui(state)
+    immapp.run(gui_function=run_gui, with_node_editor=True)
+
+
+if __name__ == "__main__":
+    main()

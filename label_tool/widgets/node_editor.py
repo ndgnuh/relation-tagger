@@ -26,6 +26,9 @@ class Node:
     in_pin: ed.PinId = field(default_factory=ed.PinId.create)
     out_pin: ed.PinId = field(default_factory=ed.PinId.create)
 
+    def __post_init__(self):
+        ed.set_node_position(self.node_id, imgui.ImVec2(self.x, self.y))
+
     def __hash__(self):
         return hash((self.text, self.x, self.y))
 
@@ -127,7 +130,7 @@ class NodeEditor:
 
         def key(node):
             pos = ed.get_node_position(node_id=node.node_id)
-            return (pos[1], pos[0])
+            return (pos[1] + pos[0])
 
         if len(sel) < 2:
             return []

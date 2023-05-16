@@ -44,12 +44,10 @@ def save(state):
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.d)
 @requires("dataset")
 def save(state):
-    print("Next")
     state.dataset.next_data()
 
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.a)
 @requires("dataset")
 def save(state):
-    print("Prev")
     state.dataset.previous_data()
