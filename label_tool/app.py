@@ -56,8 +56,9 @@ def update():
     from subprocess import run
 
     remote = "https://github.com/ndgnuh/spade-label-tool"
-    ref = "92ad8964504909be753a4bd771854cec1c853515"
-    run(["pip", "install", f"git+{remote}@{ref}"])
+    ref = ""
+    # ref = "@92ad8964504909be753a4bd771854cec1c853515"
+    run(["pip", "install", f"git+{remote}{ref}"])
 
 
 def main():
