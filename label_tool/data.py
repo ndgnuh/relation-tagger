@@ -2,7 +2,7 @@ import numpy as np
 import json
 from typing import *
 from functools import wraps
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PositiveInt
 
 
 def fallback_dumper(x):
@@ -29,6 +29,12 @@ class Sample(BaseModel):
     texts: List[str]
     boxes: List[Polygon]
     links: Set[Tuple[int, int]] = Field(default_factory=set)
+    image_width: int = 100
+    image_height: int = 100
+    image_base64: str = ""
+
+    def image_size(self):
+        return (self.image_width, self.image_height)
 
 
 class Dataset(BaseModel):
@@ -36,7 +42,7 @@ class Dataset(BaseModel):
     classes: List[str]
     samples: List[Sample]
     dirty: bool = False
-    idx: int = 0
+    idx: PositiveInt = 0
 
     def __hash__(self):
         return hash((id(self), self.idx))
@@ -48,6 +54,10 @@ class Dataset(BaseModel):
     def get_current_sample(self):
         return self.samples[self.idx]
 
+    def get_current_boxes(self):
+        sample = self.get_current_sample()
+        return boxes
+
     def get_current_centers(self):
         sample = self.get_current_sample()
         boxes = np.array(sample.boxes)
@@ -57,6 +67,16 @@ class Dataset(BaseModel):
     def get_edges(self):
         sample = self.get_current_sample()
         return sample.links
+
+    def next_data(self, delta=1):
+        idx = self.idx + delta
+        idx = min(idx, len(self.samples) - 1)
+        self.idx = idx
+
+    def previous_data(self, delta=1):
+        idx = self.idx - delta
+        idx = max(idx, 0)
+        self.idx = idx
 
     @mutating
     def remove_edge(self, i, j):
@@ -73,7 +93,9 @@ class Dataset(BaseModel):
 
     def save(self):
         data = self.dict(exclude={"path", "dirty", "idx"})
-        data_str = json.dumps(data, ensure_ascii=False, indent=4, default=fallback_dumper)
+        data_str = json.dumps(
+            data, ensure_ascii=False, indent=4, default=fallback_dumper
+        )
         with open(self.path, "w", encoding="utf-8") as f:
             f.write(data_str)
         self.dirty = False

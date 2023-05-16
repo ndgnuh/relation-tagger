@@ -2,6 +2,7 @@ import math
 from imgui_bundle import imgui, imgui_node_editor as ed, ImVec4
 from dataclasses import dataclass, field
 from typing import List, Set, Tuple, Dict
+import numpy as np
 
 
 @dataclass
@@ -60,15 +61,15 @@ class Link:
 
 
 class NodeEditor:
-    def __init__(self, texts, boxes, links, dataset):
+    def __init__(self, dataset):
+        sample = dataset.get_current_sample()
+        self.texts = sample.texts
+        self.boxes = sample.boxes
         self.dataset = dataset
-        self.texts = [(text, x, y) for (text, (x, y)) in zip(texts, boxes)]
-        self.edge_index = links
         self.nodes = []
-        self.links = []
-        for i, text in enumerate(texts):
-            node = Node(text, *boxes[i])
-            self.nodes.append(node)
+        self.centers = np.array(self.boxes).mean(axis=1)
+        for text, center in zip(self.texts, self.centers):
+            self.nodes.append(Node(text, *center))
         self.init_links()
 
     def init_links(self):
@@ -97,11 +98,13 @@ class NodeEditor:
     def delete_edges_from_selections(self):
         sel = self.get_node_selections()
         from itertools import product
+
         for in_node, out_node in product(sel, sel):
             i = self.nodes.index(in_node)
             j = self.nodes.index(out_node)
             self.dataset.remove_edge(i, j)
         self.init_links()
+        self.deselect_all()
 
     def create_edges_from_selections(self):
         sel = self.get_node_selections()
@@ -110,6 +113,11 @@ class NodeEditor:
             j = self.nodes.index(out_node)
             self.dataset.add_edge(i, j)
         self.init_links()
+        self.deselect_all()
+
+    def deselect_all(self):
+        for node in self.get_node_selections():
+            ed.deselect_node(node.node_id)
 
     def get_node_selections(self):
         sel = []
@@ -119,7 +127,7 @@ class NodeEditor:
 
         def key(node):
             pos = ed.get_node_position(node_id=node.node_id)
-            return pos[0] + pos[1]
+            return (pos[1], pos[0])
 
         if len(sel) < 2:
             return []

@@ -39,7 +39,7 @@ def create_node_editor(dataset: Dataset):
         return
     sample = dataset.get_current_sample()
     boxes = dataset.get_current_centers()
-    return NodeEditor(sample.texts, boxes, sample.links, dataset)
+    return NodeEditor(dataset)
 
 
 @dataclass
