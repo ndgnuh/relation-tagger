@@ -47,6 +47,9 @@ class Dataset(BaseModel):
     def __hash__(self):
         return hash((id(self), self.idx))
 
+    def __len__(self):
+        return len(self.samples)
+
     @classmethod
     def from_dict(cls, d):
         return cls(**d)

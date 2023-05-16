@@ -7,6 +7,7 @@ from .widgets.filepicker import pick_open_file
 from .states import State
 from .widgets.node_editor import NodeEditor
 from .widgets.dirty_indicator import dirty_indicator, save_button
+from .widgets.datastatus import datastatus
 from .shortcuts import Shortcut
 
 thisdir = path.dirname(__file__)
@@ -15,10 +16,7 @@ thisdir = path.dirname(__file__)
 def gui(state):
     try:
         root_width, root_height = imgui.get_window_size()
-        if state.dataset:
-            dirty_indicator(state)
-            imgui.same_line()
-            imgui.text(f"Selected data: {state.dataset_file}")
+        datastatus(state)
 
         if isinstance(state.error, str):
             imgui.set_next_window_size(
@@ -67,6 +65,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("--data", dest="data")
     parser.add_argument("--update", dest="update", action="store_true", default=False)
+    parser.add_argument("--font-size", dest="font_size", type=int, default=16)
 
     args = parser.parse_args()
     if args.update:
@@ -81,7 +80,7 @@ def main():
         io = imgui.get_io()
         io.fonts.add_font_from_file_ttf(
             path.join(thisdir, "fonts", "JuliaMono-Regular.ttf"),
-            16,
+            args.font_size,
             None,
             io.fonts.get_glyph_ranges_vietnamese(),
         )
