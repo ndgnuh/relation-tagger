@@ -11,6 +11,7 @@ from .shortcuts import Shortcut
 
 thisdir = path.dirname(__file__)
 
+
 def gui(state):
     try:
         root_width, root_height = imgui.get_window_size()
@@ -51,13 +52,24 @@ def gui(state):
         state.error = str(e)
 
 
+def update():
+    from subprocess import run
+
+    remote = "https://github.com/ndgnuh/spade-label-tool"
+    ref = "92ad8964504909be753a4bd771854cec1c853515"
+    run(["pip", "install", f"git+{remote}@{ref}"])
+
+
 def main():
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
     parser.add_argument("--data", dest="data")
+    parser.add_argument("--update", dest="update", action="store_true", default=False)
 
     args = parser.parse_args()
+    if args.update:
+        return update()
 
     state = State(dataset_file=args.data)
 
@@ -68,7 +80,9 @@ def main():
         io = imgui.get_io()
         io.fonts.add_font_from_file_ttf(
             path.join(thisdir, "..", "fonts", "JuliaMono-Regular.ttf"),
-            20, None, io.fonts.get_glyph_ranges_vietnamese()
+            20,
+            None,
+            io.fonts.get_glyph_ranges_vietnamese(),
         )
 
     runner_params = immapp.RunnerParams()
