@@ -21,6 +21,8 @@ def datastatus(state: State):
 
 label_selector_state = Namespace(selected_id=0)
 
+
+@requires("dataset")
 def label_selector(state: State, x=0, y=0):
     static = label_selector_state
     classes = state.dataset.classes

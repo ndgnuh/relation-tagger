@@ -21,14 +21,15 @@ def gui(state):
 
         root_width, root_height = imgui.get_window_size()
         menu_height = 30
-        
+
         # Menu bar
         menubar_events = draw_menu_bar(state)
 
         #
         # Left panel
         #
-        imgui.set_next_window_pos(imgui.ImVec2(0, menubar_events.menubar_height))
+        imgui.set_next_window_pos(imgui.ImVec2(
+            0, menubar_events.menubar_height))
         imgui.begin("Tools")
         imgui.set_window_size(imgui.ImVec2(root_width * 0.2, root_height))
         label_selector(state)
@@ -37,8 +38,13 @@ def gui(state):
         #
         # Main panel
         #
-        imgui.begin("Workspace")
-        imgui.set_window_pos(imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height))
+        imgui.set_next_window_pos(
+            imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height)
+        )
+        imgui.begin(
+            "Workspace",
+            flags=imgui.WindowFlags_.no_scrollbar
+        )
         imgui.set_window_size(imgui.ImVec2(root_width * 0.8, root_height))
         # if isinstance(state.error, str):
         #     imgui.set_next_window_size(
@@ -68,7 +74,8 @@ def gui(state):
 
         # Conditional widgets/popups
         # Must be drawn last
-        dataset_file = filepicker.pick_open_file(menubar_events.import_btn_clicked)
+        dataset_file = filepicker.pick_open_file(
+            menubar_events.import_btn_clicked)
         if dataset_file:
             state.dataset_file = dataset_file
             state.dataset
@@ -93,7 +100,8 @@ def main():
 
     parser = ArgumentParser()
     parser.add_argument("--data", dest="data")
-    parser.add_argument("--update", dest="update", action="store_true", default=False)
+    parser.add_argument("--update", dest="update",
+                        action="store_true", default=False)
     parser.add_argument("--font-size", dest="font_size", type=int, default=16)
 
     args = parser.parse_args()
@@ -123,7 +131,8 @@ def main():
     # runner_params.imgui_window_params.show_menu_bar = True
     # runner_params.imgui_window_params.enable_viewports = True
 
-    add_ons_params = immapp.AddOnsParams(with_node_editor=True, with_markdown=True)
+    add_ons_params = immapp.AddOnsParams(
+        with_node_editor=True, with_markdown=True)
     immapp.run(runner_params, add_ons_params)
 
 
