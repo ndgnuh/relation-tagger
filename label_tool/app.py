@@ -81,7 +81,7 @@ def main():
         io = imgui.get_io()
         io.fonts.add_font_from_file_ttf(
             path.join(thisdir, "fonts", "JuliaMono-Regular.ttf"),
-            20,
+            16,
             None,
             io.fonts.get_glyph_ranges_vietnamese(),
         )
