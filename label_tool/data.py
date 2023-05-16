@@ -59,6 +59,14 @@ class Dataset(BaseModel):
         return sample.links
 
     @mutating
+    def remove_edge(self, i, j):
+        sample = self.get_current_sample()
+        try:
+            sample.links.remove((i, j))
+        except KeyError:
+            pass
+
+    @mutating
     def add_edge(self, i, j):
         sample = self.get_current_sample()
         sample.links.add((i, j))

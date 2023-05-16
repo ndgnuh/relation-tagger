@@ -90,7 +90,18 @@ class NodeEditor:
 
         if imgui.is_key_pressed(imgui.Key.s):
             self.create_edges_from_selections()
+        if imgui.is_key_pressed(imgui.Key.r):
+            self.delete_edges_from_selections()
         ed.end()
+
+    def delete_edges_from_selections(self):
+        sel = self.get_node_selections()
+        from itertools import product
+        for in_node, out_node in product(sel, sel):
+            i = self.nodes.index(in_node)
+            j = self.nodes.index(out_node)
+            self.dataset.remove_edge(i, j)
+        self.init_links()
 
     def create_edges_from_selections(self):
         sel = self.get_node_selections()
