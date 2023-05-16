@@ -19,7 +19,8 @@ def create_node_editor(dataset: Dataset):
     if dataset is None:
         return
     sample = dataset.get_current_sample()
-    return NodeEditor(sample.texts, sample.boxes, sample.links)
+    boxes = dataset.get_current_centers()
+    return NodeEditor(sample.texts, boxes, sample.links)
 
 
 @ dataclass

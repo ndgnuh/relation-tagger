@@ -9,11 +9,12 @@ from label_tool.widgets.node_editor import NodeEditor
 
 
 def main(state):
+    root_width, root_height = imgui.get_window_size()
     if state.dataset:
         imgui.text(f"Selected data: {state.dataset_file}")
 
     if isinstance(state.error, str):
-        imgui.set_next_window_size(imgui.ImVec2(500, 120))
+        imgui.set_next_window_size(imgui.ImVec2(root_width * 0.8, root_height * 0.8))
         imgui.begin("Error")
         imgui.text(state.error)
         if imgui.button("OK"):
