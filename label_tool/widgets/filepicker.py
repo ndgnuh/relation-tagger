@@ -3,12 +3,11 @@ from imgui_bundle import im_file_dialog
 
 fd = im_file_dialog.FileDialog.instance()
 
-@immapp.static()
-def pick_open_file(button, title, description):
+def pick_open_file(pick, title="Open a file", description="Open a file"):
     selected_file = None
-    picker_id = f"{button}-picker"
+    picker_id = f"file-picker"
 
-    if imgui.button(button):
+    if pick:
         fd.open(picker_id, title, description, True)
 
     if fd.is_done(picker_id):

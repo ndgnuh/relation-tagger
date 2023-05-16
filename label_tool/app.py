@@ -1,13 +1,16 @@
 import random
 from os import path
 from itertools import product
+from dataclasses import dataclass
 from imgui_bundle import imgui, immapp
 from imgui_bundle import im_file_dialog as fd
 from .widgets.filepicker import pick_open_file
 from .states import State
 from .widgets.node_editor import NodeEditor
+from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
 from .widgets.datastatus import datastatus, label_selector
+from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 
 thisdir = path.dirname(__file__)
@@ -15,54 +18,57 @@ thisdir = path.dirname(__file__)
 
 def gui(state):
     try:
+        # Render menu bar 
+        menubar_events = draw_menu_bar(state)
+
         root_width, root_height = imgui.get_window_size()
 
-        # Status bar
-
-        # Render menu bar 
-        imgui.begin("Main")
-        if imgui.begin_main_menu_bar():
-            # File menu
-            if imgui.begin_menu('File', True):
-                clicked = imgui.menu_item('Import', 'Ctrl+O', False, True)
-                clicked = imgui.menu_item('Save', 'Ctrl+S', False, True)
-                imgui.end_menu()
-
-            # Datastatus
-            imgui.same_line()
-            imgui.separator()
-            datastatus(state)
-        imgui.end_main_menu_bar()
+        #
+        # Left panel
+        #
+        imgui.begin("Tools")
+        imgui.set_window_pos(imgui.ImVec2(0, 0))
+        imgui.set_window_size(imgui.ImVec2(root_width * 0.2, root_height))
         imgui.end()
 
-        if isinstance(state.error, str):
-            imgui.set_next_window_size(
-                imgui.ImVec2(root_width * 0.8, root_height * 0.8)
-            )
-            imgui.begin("Error")
-            imgui.text(state.error)
-            if imgui.button("OK"):
-                state.resolve_error()
-            imgui.end()
+        #
+        # Main panel
+        #
+        imgui.begin("Workspace")
+        imgui.set_window_pos(imgui.ImVec2(root_width * 0.2, 0))
+        imgui.set_window_size(imgui.ImVec2(root_width * 0.8, root_height))
+        # if isinstance(state.error, str):
+        #     imgui.set_next_window_size(
+        #         imgui.ImVec2(root_width * 0.8, root_height * 0.8)
+        #     )
+        #     imgui.begin("Error")
+        #     imgui.text(state.error)
+        #     if imgui.button("OK"):
+        #         state.resolve_error()
+        #     imgui.end()
 
-        state.checkpoint()
-        imgui.begin_group()
-        imgui.dummy(imgui.ImVec2(0, 30))
-        selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
-        if selected_dataset:
-            state.dataset_file = selected_dataset
-        save_button(state)
-        imgui.end_group()
+        # state.checkpoint()
+        # imgui.dummy(imgui.ImVec2(0, 30))
+        # selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
+        # if selected_dataset:
+        #     state.dataset_file = selected_dataset
+        # save_button(state)
 
         if state.node_editor is not None:
             imgui.same_line()
-            imgui.begin_group()
             state.node_editor.on_frame()
             label_selector(state)
-            imgui.end_group()
+        imgui.end()
 
         # handle shortcut
         Shortcut.on_frame(state)
+
+        # Conditional widgets/popups
+        # Must be drawn last
+        dataset_file = filepicker.pick_open_file(menubar_events.import_btn_clicked)
+        if dataset_file:
+            state.dataset_file = dataset_file
+            state.dataset
     except Exception as e:
         import traceback
 
