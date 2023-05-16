@@ -1,17 +1,35 @@
 import copy
 import json
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import lru_cache, wraps
 from typing import *
 
 from .widgets.node_editor import NodeEditor
 from .data import Dataset
 
 
+def requires(fields):
+    if isinstance(fields, str):
+        fields = [fields]
+
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(state, *args, **kwargs):
+            for k in fields:
+                if getattr(state, k, None) is None:
+                    return
+            f(state, *args, **kwargs)
+
+        return wrapped
+
+    return wrapper
+
+
 @lru_cache
 def read_data(dataset_file: str) -> Dataset:
     with open(dataset_file, "r") as fp:
         data = json.load(fp)
+        data["path"] = dataset_file
     return Dataset.from_dict(data)
 
 

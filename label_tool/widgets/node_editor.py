@@ -61,6 +61,7 @@ class Link:
 
 class NodeEditor:
     def __init__(self, texts, boxes, links, dataset):
+        self.dataset = dataset
         self.texts = [(text, x, y) for (text, (x, y)) in zip(texts, boxes)]
         self.edge_index = links
         self.nodes = []
@@ -71,10 +72,12 @@ class NodeEditor:
         self.init_links()
 
     def init_links(self):
-        self.links = []
-        for k, (i, j) in enumerate(self.edge_index):
+        links = []
+        edge_index = self.dataset.get_edges()
+        for k, (i, j) in enumerate(edge_index):
             link = Link(k, self.nodes[i], self.nodes[j])
-            self.links.append(link)
+            links.append(link)
+        self.links = links
 
     def on_frame(self):
         ed.begin("Node editor", imgui.ImVec2(0, 0))
@@ -91,11 +94,10 @@ class NodeEditor:
 
     def create_edges_from_selections(self):
         sel = self.get_node_selections()
-        n = len(sel)
         for in_node, out_node in zip(sel, sel[1:]):
             i = self.nodes.index(in_node)
             j = self.nodes.index(out_node)
-            self.edge_index.add((i, j))
+            self.dataset.add_edge(i, j)
         self.init_links()
 
     def get_node_selections(self):
