@@ -36,9 +36,10 @@ class Node:
     def draw(self):
         pin_text = " "
         ed.begin_node(self.node_id)
+        h = imgui.get_text_line_height()
 
         ed.begin_pin(self.in_pin, ed.PinKind.input)
-        imgui.text(pin_text)
+        imgui.dummy(imgui.ImVec2(1, h))
         ed.end_pin()
 
         imgui.same_line()
@@ -47,7 +48,7 @@ class Node:
 
         imgui.same_line()
         ed.begin_pin(self.out_pin, ed.PinKind.output)
-        imgui.text(pin_text)
+        imgui.dummy(imgui.ImVec2(1, h))
         ed.end_pin()
 
         ed.end_node()
