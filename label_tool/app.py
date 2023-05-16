@@ -32,7 +32,70 @@ def gui(state):
             0, menubar_events.menubar_height))
         imgui.begin("Tools")
         imgui.set_window_size(imgui.ImVec2(root_width * 0.2, root_height))
-        label_selector(state)
+
+        imgui.separator()
+        imgui.text_disabled("Sample")
+        imgui.separator()
+        imgui.bullet()
+        imgui.menu_item("Previous sample", "", False, True)
+        imgui.bullet()
+        imgui.menu_item("Next sample", "", False, True)
+        imgui.bullet()
+        imgui.begin_group()
+        imgui.text("Jump to sample")
+        imgui.input_int("##jump-to-sample-idx", 0, step=1, step_fast=5)
+        imgui.end_group()
+        imgui.bullet()
+        imgui.menu_item("Delete sample", "", False, True)
+
+        imgui.spacing()
+        imgui.separator()
+        imgui.text_disabled("Node")
+        imgui.separator()
+        imgui.bullet()
+        imgui.begin_group()
+        imgui.text("Node class:")
+        imgui.combo("##node-class", 0, ["A", "B"])
+        imgui.end_group()
+        imgui.bullet()
+        imgui.menu_item("Split node", "", False, True)
+
+        imgui.spacing()
+        imgui.separator()
+        imgui.text_disabled("Misc")
+        imgui.separator()
+        imgui.bullet()
+        imgui.menu_item("Show shortcuts", "Ctrl+/", False, True)
+        imgui.bullet()
+        imgui.menu_item("Toggle thumbnail", "Q", False, True)
+        imgui.begin_table("##graph-info", 2)
+        imgui.table_next_column()
+        imgui.table_header("Props")
+        imgui.table_next_column()
+        imgui.table_header("Values")
+        imgui.table_next_row()
+
+        imgui.table_next_column()
+        imgui.text("Number of nodes")
+        imgui.table_next_column()
+        imgui.text("-999")
+        imgui.table_next_row()
+
+        imgui.table_next_column()
+        imgui.text("Number of edges")
+        imgui.table_next_column()
+        imgui.text("-999")
+        imgui.table_next_row()
+        imgui.end_table()
+
+        # preview image
+        imgui.spacing()
+        imgui.separator()
+        imgui.text_disabled("Image preview")
+        imgui.separator()
+        imgui.text("TODO")
+
+        # End left panel
         imgui.end()
 
         #
@@ -41,28 +104,13 @@ def gui(state):
         imgui.set_next_window_pos(
             imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height)
         )
+        imgui.set_next_window_size(imgui.ImVec2(root_width * 0.8, root_height))
         imgui.begin(
             "Workspace",
             flags=imgui.WindowFlags_.no_scrollbar
         )
-        imgui.set_window_size(imgui.ImVec2(root_width * 0.8, root_height))
-        # if isinstance(state.error, str):
-        #     imgui.set_next_window_size(
-        #         imgui.ImVec2(root_width * 0.8, root_height * 0.8)
-        #     )
-        #     imgui.begin("Error")
-        #     imgui.text(state.error)
-        #     if imgui.button("OK"):
-        #         state.resolve_error()
-        #     imgui.end()
 
-        # state.checkpoint()
-        # imgui.dummy(imgui.ImVec2(0, 30))
-        # selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
-        # if selected_dataset:
-        #     state.dataset_file = selected_dataset
-        # save_button(state)
-
+        # Node editor
         if state.node_editor is not None:
             imgui.same_line()
             state.node_editor.on_frame()
@@ -71,6 +119,9 @@ def gui(state):
 
         # handle shortcut
         Shortcut.on_frame(state)
+
+        # FInall
+        imgui.show_demo_window()
 
         # Conditional widgets/popups
         # Must be drawn last
