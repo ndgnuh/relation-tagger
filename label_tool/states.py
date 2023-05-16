@@ -1,3 +1,4 @@
+import copy
 import json
 from dataclasses import dataclass
 from functools import lru_cache
@@ -20,22 +21,27 @@ def create_node_editor(dataset: Dataset):
         return
     sample = dataset.get_current_sample()
     boxes = dataset.get_current_centers()
-    return NodeEditor(sample.texts, boxes, sample.links)
+    return NodeEditor(sample.texts, boxes, sample.links, dataset)
 
 
-@ dataclass
+@dataclass
 class State:
     error: Optional[str] = None
     dataset_file: Optional[str] = None
+    previous: Optional = None
+
+    def checkpoint(self):
+        self.previous = copy.copy(self)
 
     def resolve_error(self):
-        pass
+        for k, v in vars(state.previous).items():
+            setattr(self, k, v)
 
-    @ property
+    @property
     def node_editor(self):
         return create_node_editor(self.dataset)
 
-    @ property
+    @property
     def dataset(self):
         if self.dataset_file is None:
             return None
@@ -49,5 +55,6 @@ class State:
             for k, v in resolve_states.items():
                 setattr(self, k, v)
             self.error = None
+
         self.error = msg
         self.resolve_error = resolve

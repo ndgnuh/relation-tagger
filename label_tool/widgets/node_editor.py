@@ -60,19 +60,19 @@ class Link:
 
 
 class NodeEditor:
-    def __init__(self, texts, boxes, links):
+    def __init__(self, texts, boxes, links, dataset):
         self.texts = [(text, x, y) for (text, (x, y)) in zip(texts, boxes)]
-        self.edge_index = set([(i, j) for (i, j) in links])
+        self.edge_index = links
         self.nodes = []
         self.links = []
-        for (i, text) in enumerate(texts):
+        for i, text in enumerate(texts):
             node = Node(text, *boxes[i])
             self.nodes.append(node)
         self.init_links()
 
     def init_links(self):
         self.links = []
-        for (k, (i, j)) in enumerate(self.edge_index):
+        for k, (i, j) in enumerate(self.edge_index):
             link = Link(k, self.nodes[i], self.nodes[j])
             self.links.append(link)
 
@@ -85,9 +85,20 @@ class NodeEditor:
         for link in self.links:
             link.draw()
 
+        if imgui.is_key_pressed(imgui.Key.s):
+            self.create_edges_from_selections()
         ed.end()
 
-    def _get_node_selections(self):
+    def create_edges_from_selections(self):
+        sel = self.get_node_selections()
+        n = len(sel)
+        for in_node, out_node in zip(sel, sel[1:]):
+            i = self.nodes.index(in_node)
+            j = self.nodes.index(out_node)
+            self.edge_index.add((i, j))
+        self.init_links()
+
+    def get_node_selections(self):
         sel = []
         for node in self.nodes:
             if ed.is_node_selected(node.node_id):

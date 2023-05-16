@@ -10,7 +10,7 @@ Polygon = Tuple[Point, Point, Point, Point]
 class Sample(BaseModel):
     texts: List[str]
     boxes: List[Polygon]
-    links: List[Tuple[int, int]] = Field(default_factory=list)
+    links: Set[Tuple[int, int]] = Field(default_factory=set)
 
 
 
