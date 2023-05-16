@@ -6,12 +6,16 @@ from demo import demo_imfile_dialog
 from label_tool.widgets.filepicker import pick_open_file
 from label_tool.states import State
 from label_tool.widgets.node_editor import NodeEditor
+from label_tool.widgets.dirty_indicator import dirty_indicator, save_button
+from label_tool.shortcuts import Shortcut
 
 
 def main(state):
     try:
         root_width, root_height = imgui.get_window_size()
         if state.dataset:
+            dirty_indicator(state)
+            imgui.same_line()
             imgui.text(f"Selected data: {state.dataset_file}")
 
         if isinstance(state.error, str):
@@ -23,17 +27,24 @@ def main(state):
             imgui.end()
 
         state.checkpoint()
+        imgui.begin_group()
         selected_dataset = pick_open_file("Pick data", "Data file", "*jsonl")
         if selected_dataset:
             state.dataset_file = selected_dataset
             print(selected_dataset)
+        save_button(state)
+        imgui.end_group()
 
         if state.node_editor is not None:
             imgui.same_line()
             imgui.begin_group()
             state.node_editor.on_frame()
             imgui.end_group()
+
+        Shortcut.on_frame(state)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         state.error = str(e)
 
 state = State(0)
