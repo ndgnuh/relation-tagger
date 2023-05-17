@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-pip install "git+https://github.com/ndgnuh/spade-label-tool"
+pip install "git+https://github.com/ndgnuh/relation-tagger"
 ```
 
 ## Run
