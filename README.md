@@ -25,14 +25,18 @@ s                    | Link selected nodes
 r                    | Delete links between selected nodes
 a                    | Previous sample
 d                    | Next sample
+1-9                  | Set node class
+0                    | Remove node class
+Tab                  | Toggle image preview
 
 Mouse:
 
 Action               | Function
 :---                 | :---
 Click                | Select node
-Ctrl + Shift + Click | Select multiple nodes
-Click drag           | Select multiple nodes
+Ctrl + Click         | Select multiple nodes
+Click drag           | Select multiple nodes, discard previous selections
+Ctrl + Click drag    | Select multiple nodes, append selections
 Right click drag     | Move canvas
 Mouse wheel          | Zoom in/out
 
