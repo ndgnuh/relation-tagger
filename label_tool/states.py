@@ -42,11 +42,21 @@ def create_node_editor(dataset: Dataset):
     return NodeEditor(dataset)
 
 
+def toggle(x):
+    print(x)
+    return x
+
+
 @dataclass
 class State:
     error: Optional[str] = None
     dataset_file: Optional[str] = None
     previous: Optional = None
+
+    show_image_preview: bool = True
+
+    def toggle_show_image_preview(self):
+        self.show_image_preview = not self.show_image_preview
 
     def checkpoint(self):
         self.previous = copy.copy(self)

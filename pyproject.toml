@@ -4,7 +4,8 @@ version = "0.2.7"
 dependencies = [
 	"imgui-bundle",
 	"pydantic",
-	"numpy"
+	"numpy",
+	"Pillow"
 ]
 
 [project.scripts]

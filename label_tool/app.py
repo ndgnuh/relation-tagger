@@ -10,6 +10,7 @@ from .widgets.node_editor import NodeEditor
 from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
 from .widgets.data_widgets import label_selector
+from .widgets import data_widgets as dw
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 
@@ -110,11 +111,19 @@ def gui(state):
             flags=imgui.WindowFlags_.no_scrollbar
         )
 
-        # Node editor
+        #
+        # Data widgets
+        #
         if state.node_editor is not None:
             imgui.same_line()
+            # Node editor
             state.node_editor.on_frame()
-            label_selector(state)
+
+        # Class selector
+        dw.label_selector(state)
+        # Image preview
+        dw.image_preview(state)
+
         imgui.end_child()
 
         # handle shortcut
