@@ -16,6 +16,7 @@ relation-tagger
 Start with a dataset
 ```bash
 relation-tagger --data data.json
+```
 
 Update
 ```bash
