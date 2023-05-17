@@ -19,7 +19,6 @@ thisdir = path.dirname(__file__)
 
 def gui(state):
     try:
-
         root_width, root_height = imgui.get_window_size()
         menu_height = 30
 
@@ -29,9 +28,12 @@ def gui(state):
         #
         # Left panel
         #
-        imgui.set_next_window_pos(imgui.ImVec2(
-            0, menubar_events.menubar_height))
-        imgui.begin_child("Tools", imgui.ImVec2(root_width * 0.2, 0), True)
+        imgui.set_next_window_pos(imgui.ImVec2(0, menubar_events.menubar_height))
+        # imgui.set_next_window_size(imgui.ImVec2(root_width * 0.2, 0))
+        imgui.begin(
+            name="Tools",
+            flags = imgui.WindowFlags_.no_collapse
+        )
 
         dw.sample_navigator(state)
         imgui.spacing()
@@ -42,44 +44,29 @@ def gui(state):
         imgui.text_disabled("Misc")
         imgui.separator()
         imgui.bullet()
+        imgui.begin_group()
         imgui.menu_item("Show shortcuts", "Ctrl+/", False, True)
+        imgui.text_wrapped("(This functionality is not implemented)")
+        imgui.end_group()
         imgui.bullet()
         if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
             state.toggle_show_image_preview()
-        imgui.begin_table("##graph-info", 2)
-        imgui.table_next_column()
-        imgui.table_header("Props")
-        imgui.table_next_column()
-        imgui.table_header("Values")
-        imgui.table_next_row()
-
-        imgui.table_next_column()
-        imgui.text("Number of nodes")
-        imgui.table_next_column()
-        imgui.text("-999")
-        imgui.table_next_row()
-
-        imgui.table_next_column()
-        imgui.text("Number of edges")
-        imgui.table_next_column()
-        imgui.text("-999")
-        imgui.table_next_row()
-        imgui.end_table()
 
         # End left panel
-        imgui.end_child()
+        left_panel_with = imgui.get_window_width()
+        imgui.end()
 
         #
         # Main panel
         #
         imgui.set_next_window_pos(
-            imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height)
+            imgui.ImVec2(left_panel_with, menubar_events.menubar_height)
         )
-        imgui.set_next_window_size(imgui.ImVec2(root_width * 0.8, root_height))
+        imgui.set_next_window_size(imgui.ImVec2(root_width - left_panel_with, root_height))
         imgui.same_line()
-        imgui.begin_child(
-            "Workspace",
-            flags=imgui.WindowFlags_.no_scrollbar
+        imgui.begin(
+            name="Workspace",
+            flags=imgui.WindowFlags_.no_scrollbar and imgui.WindowFlags_.no_collapse
         )
 
         #
@@ -95,19 +82,18 @@ def gui(state):
         # Image preview
         dw.image_preview(state)
 
-        imgui.end_child()
+        imgui.end()
 
         # handle shortcut
         Shortcut.on_frame(state)
 
-        # FInall
-        imgui.show_demo_window()
-
         # Conditional widgets/popups
         # Must be drawn last
         dataset_file = filepicker.pick_open_file(
-            menubar_events.import_btn_clicked)
-        if dataset_file:
+            menubar_events.import_btn_clicked
+            or Shortcut.check(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.o)
+        )
+        if dataset_file is not None:
             state.dataset_file = dataset_file
             state.dataset
     except Exception as e:
@@ -131,8 +117,7 @@ def main():
 
     parser = ArgumentParser()
     parser.add_argument("--data", dest="data")
-    parser.add_argument("--update", dest="update",
-                        action="store_true", default=False)
+    parser.add_argument("--update", dest="update", action="store_true", default=False)
     parser.add_argument("--font-size", dest="font_size", type=int, default=16)
 
     args = parser.parse_args()
@@ -162,8 +147,7 @@ def main():
     # runner_params.imgui_window_params.show_menu_bar = True
     # runner_params.imgui_window_params.enable_viewports = True
 
-    add_ons_params = immapp.AddOnsParams(
-        with_node_editor=True, with_markdown=True)
+    add_ons_params = immapp.AddOnsParams(with_node_editor=True, with_markdown=True)
     immapp.run(runner_params, add_ons_params)
 
 

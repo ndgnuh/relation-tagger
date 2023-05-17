@@ -64,7 +64,7 @@ def image_preview_static(static, image_base64, size):
     if static["image"] is None or image_base64 != static["previous_b64"]:
         image = BytesIO(b64decode(image_base64))
         image = Image.open(image)
-        image.thumbnail((768, 768)) # Lags
+        image.thumbnail((640, 640)) # Lags
         image = np.array(image)
         static["image"] = image
         static["previous_b64"] = image_base64

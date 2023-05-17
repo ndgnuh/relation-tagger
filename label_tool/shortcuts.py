@@ -28,13 +28,18 @@ class Shortcut:
         return wrapper
 
     @classmethod
+    def check(cls, mod, key, io=None):
+        io = imgui.get_io()
+        return (
+            (io.key_mods & mod)
+            or (mod == imgui.Key.im_gui_mod_none)
+        ) and imgui.is_key_pressed(key)
+
+    @classmethod
     def on_frame(cls, state):
         io = imgui.get_io()
         for shortcut in cls.shortcuts:
-            if (
-                (io.key_mods & shortcut.mod)
-                or (shortcut.mod == imgui.Key.im_gui_mod_none)
-            ) and imgui.is_key_pressed(shortcut.key):
+            if cls.check(shortcut.mod, shortcut.key, io):
                 shortcut.callback(state)
                 return
 
