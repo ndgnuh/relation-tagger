@@ -111,6 +111,10 @@ def gui(state):
         # it still quits after the dataset is saved
         if state.app_wants_exit:
             state.app_is_runnning = modals.warn_on_exit(state)
+
+        if state.app_wants_save_data:
+            state.data.save()
+            state.app_wants_save_data = False
     except Exception as e:
         import traceback
 

@@ -16,8 +16,10 @@ def draw_menu_bar(state):
 
         # File menu
         if imgui.begin_menu('File', True):
-            result.import_btn_clicked, _ = imgui.menu_item('Import', 'Ctrl+O', False, True)
-            clicked, _ = imgui.menu_item('Save', 'Ctrl+S', False, True)
+            if imgui.menu_item('Import', 'Ctrl+O', False, True)[0]:
+                state.show_data_picker = True
+            if imgui.menu_item('Save', 'Ctrl+S', False, True)[0]:
+                state.app_wants_save_data = True
             imgui.end_menu()
 
         # Datastatus
