@@ -34,18 +34,8 @@ def gui(state):
         imgui.begin_child("Tools", imgui.ImVec2(root_width * 0.2, 0), True)
 
         dw.sample_navigator(state)
-
         imgui.spacing()
-        imgui.separator()
-        imgui.text_disabled("Node")
-        imgui.separator()
-        imgui.bullet()
-        imgui.begin_group()
-        imgui.text("Node class:")
-        imgui.combo("##node-class", 0, ["A", "B"])
-        imgui.end_group()
-        imgui.bullet()
-        imgui.menu_item("Split node", "", False, True)
+        dw.node_navigator(state)
 
         imgui.spacing()
         imgui.separator()

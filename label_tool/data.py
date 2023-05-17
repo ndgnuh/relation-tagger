@@ -90,6 +90,24 @@ class Dataset(BaseModel):
         idx = max(idx, 0)
         self.idx = idx
 
+    def get_text_class(self, node_idx: int):
+        sample = self.get_current_sample()
+        assert isinstance(node_idx, int) and node_idx < len(sample.texts)
+        return sample.classes.get(node_idx, None)
+
+    def set_text_class(self, node_idx: int, class_idx: int):
+        sample = self.get_current_sample()
+        assert isinstance(node_idx, int) and node_idx < len(sample.texts)
+        assert isinstance(class_idx, int)
+        if class_idx < 0:
+            try:
+                sample.classes.pop(node_idx)
+            except KeyError:
+                pass
+        else:
+            assert class_idx < len(self.classes)
+            sample.classes[node_idx] = class_idx
+
     @mutating
     def remove_edge(self, i, j):
         sample = self.get_current_sample()

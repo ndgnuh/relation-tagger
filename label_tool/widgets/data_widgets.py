@@ -1,5 +1,6 @@
-from base64 import b64decode
 from io import BytesIO
+from base64 import b64decode
+from argparse import Namespace
 
 import numpy as np
 from PIL import Image
@@ -7,7 +8,7 @@ from imgui_bundle import imgui, immapp, imgui_md, immvision
 
 from ..states import requires, State
 from ..data import Dataset, Sample
-from argparse import Namespace
+from .node_editor import NodeEditor
 
 
 @requires(["dataset_file", "dataset"])
@@ -132,3 +133,42 @@ def sample_navigator(state):
     imgui.bullet()
     if imgui.menu_item("Delete sample", "", False, True)[0]:
         data.delete_current_sample()
+
+
+@requires("dataset")
+def node_navigator(state):
+    data: Dataset = state.dataset
+    ned: NodeEditor = state.node_editor
+
+    # Header
+    imgui.separator()
+    imgui.text_disabled("Node")
+    imgui.separator()
+
+    # Check if any node selected
+    # Multiple node
+    selections = ned.get_node_selections()
+    if len(selections) > 1:
+        imgui.text("Multiple node selection is not supported")
+        return
+    elif len(selections) == 0:
+        imgui.text("Select a node")
+        return
+
+    node_id = selections[0].id
+    imgui.bullet()
+    imgui.begin_group()
+    imgui.text("Node class:")
+    selection_list = ["(none)"] + data.classes
+    selected_idx = data.get_text_class(node_id)
+    selected_idx = 0 if selected_idx is None else selected_idx + 1
+    changed, selected_idx = imgui.combo("##node-class", selected_idx, selection_list)
+    if changed:
+        print(changed, selected_idx)
+        class_idx = selected_idx - 1
+        data.set_text_class(node_id, class_idx)
+    imgui.end_group()
+    imgui.bullet()
+    imgui.menu_item("Split node", "", False, True)
+
+

@@ -1,9 +1,10 @@
 import math
 import unicodedata
-from imgui_bundle import imgui, imgui_node_editor as ed, ImVec4
 from dataclasses import dataclass, field
-from typing import List, Set, Tuple, Dict
+from typing import List, Set, Tuple, Dict, Optional
+
 import numpy as np
+from imgui_bundle import imgui, imgui_node_editor as ed, ImVec4
 
 
 @dataclass
@@ -20,6 +21,7 @@ class IdProvider:
 
 @dataclass
 class Node:
+    id: str
     text: str
     x: int
     y: int
@@ -33,7 +35,7 @@ class Node:
     def __hash__(self):
         return hash((self.text, self.x, self.y))
 
-    def draw(self):
+    def draw(self, class_name: Optional[str] = None):
         pin_text = " "
         ed.begin_node(self.node_id)
         h = imgui.get_text_line_height()
@@ -43,8 +45,10 @@ class Node:
         ed.end_pin()
 
         imgui.same_line()
-        text = unicodedata.normalize("NFC", self.text)
-        imgui.text(text)
+        if class_name is not None:
+            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), f"[{class_name}]")
+            imgui.same_line()
+        imgui.text(self.text)
 
         imgui.same_line()
         ed.begin_pin(self.out_pin, ed.PinKind.output)
@@ -81,8 +85,10 @@ class NodeEditor:
         self.dataset = dataset
         self.nodes = []
         self.centers = np.array(rescale_boxes(self.boxes)).mean(axis=1)
+        count = 0
         for text, center in zip(self.texts, self.centers):
-            self.nodes.append(Node(text, *center))
+            self.nodes.append(Node(count, text, *center))
+            count += 1
         self.init_links()
 
     def init_links(self):
@@ -97,7 +103,11 @@ class NodeEditor:
         ed.begin("Node editor", imgui.ImVec2(0, 0))
 
         for node in self.nodes:
-            node.draw()
+            class_id = self.dataset.get_text_class(node.id)
+            if class_id is None:
+                node.draw()
+            else:
+                node.draw(self.dataset.classes[class_id])
 
         for link in self.links:
             link.draw()
@@ -142,8 +152,5 @@ class NodeEditor:
             pos = ed.get_node_position(node_id=node.node_id)
             return pos[1] + pos[0]
 
-        if len(sel) < 2:
-            return []
         sel = sorted(sel, key=key)
-        print([node.text for node in sel])
         return sel
