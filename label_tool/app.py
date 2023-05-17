@@ -9,7 +9,7 @@ from .states import State
 from .widgets.node_editor import NodeEditor
 from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
-from .widgets.datastatus import label_selector
+from .widgets.data_widgets import label_selector
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 
@@ -30,8 +30,7 @@ def gui(state):
         #
         imgui.set_next_window_pos(imgui.ImVec2(
             0, menubar_events.menubar_height))
-        imgui.begin("Tools")
-        imgui.set_window_size(imgui.ImVec2(root_width * 0.2, root_height))
+        imgui.begin_child("Tools", imgui.ImVec2(root_width * 0.2, 0), True)
 
         imgui.separator()
         imgui.text_disabled("Sample")
@@ -96,7 +95,7 @@ def gui(state):
         imgui.text("TODO")
 
         # End left panel
-        imgui.end()
+        imgui.end_child()
 
         #
         # Main panel
@@ -105,7 +104,8 @@ def gui(state):
             imgui.ImVec2(root_width * 0.2, menubar_events.menubar_height)
         )
         imgui.set_next_window_size(imgui.ImVec2(root_width * 0.8, root_height))
-        imgui.begin(
+        imgui.same_line()
+        imgui.begin_child(
             "Workspace",
             flags=imgui.WindowFlags_.no_scrollbar
         )
@@ -115,7 +115,7 @@ def gui(state):
             imgui.same_line()
             state.node_editor.on_frame()
             label_selector(state)
-        imgui.end()
+        imgui.end_child()
 
         # handle shortcut
         Shortcut.on_frame(state)

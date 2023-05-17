@@ -1,6 +1,6 @@
 from imgui_bundle import imgui, immapp
 from dataclasses import dataclass
-from .datastatus import datastatus
+from .data_widgets import datastatus
 
 @dataclass
 class MenuBarResult:
