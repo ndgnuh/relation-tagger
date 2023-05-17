@@ -64,6 +64,7 @@ def image_preview_static(static, image_base64, size):
     if static["image"] is None or image_base64 != static["previous_b64"]:
         image = BytesIO(b64decode(image_base64))
         image = Image.open(image)
+        image.thumbnail((768, 768)) # Lags
         image = np.array(image)
         static["image"] = image
         static["previous_b64"] = image_base64
@@ -158,11 +159,13 @@ def node_navigator(state):
     node_id = selections[0].id
     imgui.bullet()
     imgui.begin_group()
-    imgui.text("Node class:")
     selection_list = ["(none)"] + data.classes
     selected_idx = data.get_text_class(node_id)
     selected_idx = 0 if selected_idx is None else selected_idx + 1
-    changed, selected_idx = imgui.combo("##node-class", selected_idx, selection_list)
+    imgui.text("Node class:")
+    imgui.same_line()
+    imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), selection_list[selected_idx])
+    changed, selected_idx = imgui.list_box("##node-class", selected_idx, selection_list)
     if changed:
         print(changed, selected_idx)
         class_idx = selected_idx - 1
