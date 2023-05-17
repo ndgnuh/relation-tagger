@@ -56,6 +56,7 @@ class State:
     app_wants_exit: bool = False
     app_is_runnning: bool = True
     show_image_preview: bool = True
+    show_data_picker: bool = True
 
     def toggle_show_image_preview(self):
         self.show_image_preview = not self.show_image_preview

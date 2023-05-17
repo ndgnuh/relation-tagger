@@ -102,10 +102,7 @@ def gui(state):
 
         # Conditional widgets/popups
         # Must be drawn last
-        dataset_file = filepicker.pick_open_file(
-            menubar_events.import_btn_clicked
-            or Shortcut.check(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.o)
-        )
+        dataset_file = filepicker.pick_open_file(state)
         if dataset_file is not None:
             state.dataset_file = dataset_file
             state.dataset # trigger the dataset loading?

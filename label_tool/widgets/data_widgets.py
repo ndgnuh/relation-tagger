@@ -8,6 +8,7 @@ from imgui_bundle import imgui, immapp, imgui_md, immvision
 
 from ..states import requires, State
 from ..data import Dataset, Sample
+from .. import utils
 from .node_editor import NodeEditor
 
 
@@ -45,21 +46,7 @@ def label_selector(state: State, x=0, y=0):
     # imgui.end_list_box()
 
 
-def static(f):
-    from functools import wraps
-    from argparse import Namespace
-    from collections import defaultdict
-
-    static = defaultdict(lambda *a, **k: None)
-
-    @wraps(f)
-    def wrapped(*a, **k):
-        return f(static, *a, **k)
-
-    return wrapped
-
-
-@static
+@utils.static
 def image_preview_static(static, image_base64, size):
     if static["image"] is None or image_base64 != static["previous_b64"]:
         image = BytesIO(b64decode(image_base64))

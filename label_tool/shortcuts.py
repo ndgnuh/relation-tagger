@@ -31,8 +31,7 @@ class Shortcut:
     def check(cls, mod, key, io=None):
         io = imgui.get_io()
         return (
-            (io.key_mods & mod)
-            or (mod == imgui.Key.im_gui_mod_none)
+            (io.key_mods & mod) or (mod == imgui.Key.im_gui_mod_none)
         ) and imgui.is_key_pressed(key)
 
     @classmethod
@@ -87,3 +86,15 @@ for idx in range(10):
     key = getattr(imgui.Key, f"_{idx}")
     Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=key)(SetNodeClass(idx))
     del idx
+
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.o)
+@requires("dataset")
+def class_selector(state):
+    state.show_data_picker = True
+
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.c)
+@requires("dataset")
+def class_selector(state):
+    pass
