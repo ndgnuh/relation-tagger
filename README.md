@@ -3,14 +3,23 @@
 ## Installation
 
 ```bash
-pip install "git+https://github.com/ndgnuh/spade-label-tool@1fadc1cf1764e84b5645347a4250483cee2a63d1"
+pip install "git+https://github.com/ndgnuh/spade-label-tool"
 ```
 
 ## Run
 
+Start
 ```bash
 relation-tagger
+```
+
+Start with a dataset
+```bash
 relation-tagger --data data.json
+
+Update
+```bash
+relation-tagger --udate
 ```
 
 ## Shortcuts
