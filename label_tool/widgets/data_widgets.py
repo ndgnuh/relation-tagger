@@ -152,7 +152,6 @@ def node_navigator(state):
     imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), selection_list[selected_idx])
     changed, selected_idx = imgui.list_box("##node-class", selected_idx, selection_list)
     if changed:
-        print(changed, selected_idx)
         class_idx = selected_idx - 1
         data.set_text_class(node_id, class_idx)
     imgui.end_group()
