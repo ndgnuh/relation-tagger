@@ -43,7 +43,7 @@ class Node:
         ed.end_pin()
 
         imgui.same_line()
-        text = unicodedata.normalize('NFC', self.text)
+        text = unicodedata.normalize("NFC", self.text)
         imgui.text(text)
 
         imgui.same_line()
@@ -66,6 +66,13 @@ class Link:
         ed.link(ed.LinkId(self.link_id), from_pin, to_pin)
 
 
+def rescale_boxes(boxes, scale=1920):
+    boxes = np.array(boxes)
+    boxes = 1.0 * boxes * scale / boxes.max()
+    boxes = boxes.round().astype(int)
+    return boxes.tolist()
+
+
 class NodeEditor:
     def __init__(self, dataset):
         sample = dataset.get_current_sample()
@@ -73,7 +80,7 @@ class NodeEditor:
         self.boxes = sample.boxes
         self.dataset = dataset
         self.nodes = []
-        self.centers = np.array(self.boxes).mean(axis=1)
+        self.centers = np.array(rescale_boxes(self.boxes)).mean(axis=1)
         for text, center in zip(self.texts, self.centers):
             self.nodes.append(Node(text, *center))
         self.init_links()
@@ -133,7 +140,7 @@ class NodeEditor:
 
         def key(node):
             pos = ed.get_node_position(node_id=node.node_id)
-            return (pos[1] + pos[0])
+            return pos[1] + pos[0]
 
         if len(sel) < 2:
             return []
