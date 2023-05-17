@@ -124,7 +124,6 @@ def sample_navigator(state):
 @requires("dataset")
 def node_navigator(state):
     data: Dataset = state.dataset
-    ned: NodeEditor = state.node_editor
 
     # Header
     imgui.separator()
@@ -133,7 +132,7 @@ def node_navigator(state):
 
     # Check if any node selected
     # Multiple node
-    selections = ned.get_node_selections()
+    selections = state.node_editor_selections
     if len(selections) > 1:
         imgui.text("Multiple node selection is not supported")
         return

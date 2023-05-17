@@ -1,10 +1,13 @@
 import math
 import unicodedata
+from itertools import product
 from dataclasses import dataclass, field
 from typing import List, Set, Tuple, Dict, Optional
 
 import numpy as np
 from imgui_bundle import imgui, imgui_node_editor as ed, ImVec4
+from ..states import State
+from .. import utils
 
 
 @dataclass
@@ -156,3 +159,123 @@ class NodeEditor:
 
         sel = sorted(sel, key=key)
         return sel
+
+
+# Re-Re-write
+
+
+def get_cache_key(state: State):
+    if state.dataset is None:
+        return -1
+    key = (state.dataset_file, state.dataset.idx, len(state.dataset.samples))
+
+    return hash(key)
+
+
+def node_editor_init_links(state):
+    data = state.dataset
+    sample = data.get_current_sample()
+    nodes = state.node_editor_nodes
+    links = []
+    for k, (i, j) in enumerate(sample.links):
+        link = Link(k, nodes[i], nodes[j])
+        links.append(link)
+    state.node_editor_links = links
+
+
+def node_editor_init(state):
+    print("init")
+    data = state.dataset
+    sample = data.get_current_sample()
+    texts = sample.texts
+    boxes = sample.boxes
+    nodes = []
+    centers = np.array(rescale_boxes(boxes)).mean(axis=1)
+
+    # Init nodes
+    for count, (text, center) in enumerate(zip(texts, centers)):
+        nodes.append(Node(count, text, *center))
+
+    # Init links
+    links = []
+    for k, (i, j) in enumerate(sample.links):
+        link = Link(k, nodes[i], nodes[j])
+        links.append(link)
+
+    state.node_editor_nodes = nodes
+    state.node_editor_links = links
+
+
+def node_editor_get_selected_nodes(state: State) -> List[Node]:
+    sel = []
+    for node in state.node_editor_nodes:
+        if ed.is_node_selected(node.node_id):
+            sel.append(node)
+
+    def key(node):
+        pos = ed.get_node_position(node_id=node.node_id)
+        return pos[1] + pos[0]
+
+    sel = sorted(sel, key=key)
+    return sel
+
+
+def node_editor_deselect(state):
+    for node in node_editor_get_selected_nodes(state):
+        ed.deselect_node(node.node_id)
+
+
+def node_editor_add_links(state: State):
+    selections = node_editor_get_selected_nodes(state)
+    nodes = state.node_editor_nodes
+    for in_node, out_node in zip(selections, selections[1:]):
+        i = nodes.index(in_node)
+        j = nodes.index(out_node)
+        state.dataset.add_edge(i, j)
+    node_editor_init_links(state)
+    node_editor_deselect(state)
+    state.node_editor_add_links = False
+
+
+def node_editor_remove_links(state: State):
+    selections = node_editor_get_selected_nodes(state)
+    nodes = state.node_editor_nodes
+    for in_node, out_node in product(selections, selections):
+        i = nodes.index(in_node)
+        j = nodes.index(out_node)
+        state.dataset.remove_edge(i, j)
+    node_editor_init_links(state)
+    node_editor_deselect(state)
+    state.node_editor_remove_links = False
+
+
+previous_cache_key = None
+
+
+def node_editor(state: State):
+    global previous_cache_key
+    this_cache_key = get_cache_key(state)
+    if this_cache_key != previous_cache_key or state.node_editor_reinit:
+        node_editor_init(state)
+        state.node_editor_reinit = False
+    previous_cache_key = this_cache_key
+
+    #
+    # Draw nodes and edges
+    #
+    ed.begin("Editor")
+    # Draw nodes
+    for node in state.node_editor_nodes:
+        node.draw()
+    # Draw links
+    for link in state.node_editor_links:
+        link.draw()
+    ed.end()
+
+    #
+    # Handle signals
+    #
+    if state.node_editor_add_links:
+        node_editor_add_links(state)
+    if state.node_editor_remove_links:
+        node_editor_remove_links(state)

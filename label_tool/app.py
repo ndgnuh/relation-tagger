@@ -6,7 +6,7 @@ from imgui_bundle import imgui, immapp, hello_imgui
 from imgui_bundle import im_file_dialog as fd
 from .widgets.filepicker import pick_open_file
 from .states import State
-from .widgets.node_editor import NodeEditor
+from .widgets.node_editor import NodeEditor, node_editor
 from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
 from .widgets.data_widgets import label_selector
@@ -26,7 +26,7 @@ def gui(state):
         menu_height = 30
 
         # Menu bar
-        menubar_events = draw_menu_bar(state)
+        draw_menu_bar(state)
 
         #
         # Left panel
@@ -34,7 +34,7 @@ def gui(state):
         imgui.begin_group()
 
         # First window, with toolbox and stuffs
-        imgui.set_next_window_pos(imgui.ImVec2(0, menubar_events.menubar_height))
+        imgui.set_next_window_pos(imgui.ImVec2(0, state.app_menubar_height))
         imgui.begin(
             name="Tools",
             flags = imgui.WindowFlags_.no_collapse
@@ -82,7 +82,7 @@ def gui(state):
         # This one only have a node editor
         #
         imgui.set_next_window_pos(
-            imgui.ImVec2(left_panel_with, menubar_events.menubar_height)
+            imgui.ImVec2(left_panel_with, state.app_menubar_height)
         )
         imgui.set_next_window_size(imgui.ImVec2(root_width - left_panel_with, root_height))
         imgui.same_line()
@@ -90,9 +90,10 @@ def gui(state):
             name="Workspace",
             flags=imgui.WindowFlags_.no_scrollbar and imgui.WindowFlags_.no_collapse
         )
-        if state.node_editor is not None:
-            imgui.same_line()
-            state.node_editor.on_frame()
+        node_editor(state)
+        # if state.node_editor is not None:
+        #     imgui.same_line()
+        #     state.node_editor.on_frame()
         # End second panel
         imgui.end()
 

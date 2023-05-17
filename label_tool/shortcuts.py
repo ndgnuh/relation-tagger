@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import *
 from imgui_bundle import imgui
-from .states import requires
 from copy import copy
+from .states import requires, State
 
 
 @dataclass
@@ -91,3 +91,11 @@ for idx in range(10):
 @Shortcut.register(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.o)
 def class_selector(state):
     state.show_data_picker = True
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.s)
+def ned_add_links(state):
+    state.node_editor_add_links = True
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.r)
+def ned_del_links(state: State):
+    state.node_editor_remove_links = True

@@ -1,21 +1,11 @@
 import copy
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache, wraps
 from typing import *
 
-from .widgets.node_editor import NodeEditor
 from .data import Dataset
 from .utils import reactive_class, reactive, requires
-
-
-@lru_cache
-def create_node_editor(dataset: Dataset):
-    if dataset is None:
-        return
-    sample = dataset.get_current_sample()
-    boxes = dataset.get_current_centers()
-    return NodeEditor(dataset)
 
 
 @reactive_class
@@ -25,15 +15,23 @@ class State:
     dataset_file: Optional[str] = None
     previous: Optional = None
 
+    # node editor states
+    node_editor_nodes: Optional[List] = field(default_factory=list)
+    node_editor_links: Optional[List] = field(default_factory=list)
+    node_editor_selections: Optional[List] = field(default_factory=list)
+    node_editor_add_links: bool = False
+    node_editor_remove_links: bool = False
+    node_editor_reinit: bool = False
+
     # inferable
     dataset: Optional[Dataset] = None
 
     app_wants_exit: bool = False
     app_is_runnning: bool = True
     app_wants_save_data: bool = False
+    app_menubar_height: int = 10
     show_image_preview: bool = True
     show_data_picker: bool = False
-
 
     def toggle_show_image_preview(self):
         self.show_image_preview = not self.show_image_preview
@@ -44,10 +42,6 @@ class State:
     def resolve_error(self):
         for k, v in vars(state.previous).items():
             setattr(self, k, v)
-
-    @property
-    def node_editor(self):
-        return create_node_editor(self.dataset)
 
     def throw_error(self, msg, **resolve_states):
         def resolve():
