@@ -67,7 +67,8 @@ def gui(state):
         imgui.bullet()
         imgui.menu_item("Show shortcuts", "Ctrl+/", False, True)
         imgui.bullet()
-        imgui.menu_item("Toggle thumbnail", "Q", False, True)
+        if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
+            state.toggle_show_image_preview()
         imgui.begin_table("##graph-info", 2)
         imgui.table_next_column()
         imgui.table_header("Props")
@@ -87,13 +88,6 @@ def gui(state):
         imgui.text("-999")
         imgui.table_next_row()
         imgui.end_table()
-
-        # preview image
-        imgui.spacing()
-        imgui.separator()
-        imgui.text_disabled("Image preview")
-        imgui.separator()
-        imgui.text("TODO")
 
         # End left panel
         imgui.end_child()

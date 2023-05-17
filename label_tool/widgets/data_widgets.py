@@ -43,27 +43,31 @@ def label_selector(state: State, x=0, y=0):
     #     imgui.selectable(class_, False)
     # imgui.end_list_box()
 
+
 def static(f):
     from functools import wraps
     from argparse import Namespace
     from collections import defaultdict
+
     static = defaultdict(lambda *a, **k: None)
 
     @wraps(f)
     def wrapped(*a, **k):
         return f(static, *a, **k)
+
     return wrapped
+
 
 @static
 def image_preview_static(static, image_base64, size):
-    if static['image'] is None or image_base64 != static['previous_b64']:
+    if static["image"] is None or image_base64 != static["previous_b64"]:
         image = BytesIO(b64decode(image_base64))
         image = Image.open(image)
         image = np.array(image)
-        static['image'] = image
-        static['previous_b64'] = image_base64
+        static["image"] = image
+        static["previous_b64"] = image_base64
     else:
-        image = static['image']
+        image = static["image"]
 
     # Because size is float
     w, h = size
@@ -72,6 +76,7 @@ def image_preview_static(static, image_base64, size):
 
     return image, params
 
+
 @requires("dataset")
 def image_preview(state: State):
     if not state.show_image_preview:
@@ -79,7 +84,18 @@ def image_preview(state: State):
 
     imgui.begin("Preview")
     sample: Sample = state.dataset.get_current_sample()
-    size = imgui.get_window_size()
-    image, params = image_preview_static(sample.image_base64, size)
-    immvision.image("## preview", image, params)
+    if sample.image_base64 is not None:
+        size = imgui.get_window_size()
+        image, params = image_preview_static(sample.image_base64, size)
+        immvision.image("## preview", image, params)
+    else:
+        imgui.text("No image found in this sample, follow the instruction to enable image preview")
+        imgui.bullet_text("Load the data")
+        imgui.bullet_text("For each sample, read the corresponding image")
+        imgui.bullet_text("Save the image to a byte buffer")
+        imgui.bullet_text("Convert the byte buffer to base64 encoded string")
+        imgui.bullet_text("Store the encoded image string as `image_base64` in the sample")
+
+        imgui.spacing()
+        imgui.text("For more information, see `data.py` in the source code for data schema")
     imgui.end()

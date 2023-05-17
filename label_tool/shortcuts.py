@@ -51,3 +51,7 @@ def save(state):
 @requires("dataset")
 def save(state):
     state.dataset.previous_data()
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.tab)
+def toggle_im_preview(state):
+    state.toggle_show_image_preview()

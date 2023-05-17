@@ -36,7 +36,7 @@ class Sample(BaseModel):
     # unused for now
     image_width: int = 100
     image_height: int = 100
-    image_base64: str = ""
+    image_base64: Optional[str] = None
 
     def image_size(self):
         return (self.image_width, self.image_height)
