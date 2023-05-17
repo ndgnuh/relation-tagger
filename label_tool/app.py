@@ -10,7 +10,10 @@ from .widgets.node_editor import NodeEditor
 from .widgets import filepicker
 from .widgets.dirty_indicator import dirty_indicator, save_button
 from .widgets.data_widgets import label_selector
-from .widgets import data_widgets as dw
+from .widgets import (
+    data_widgets as dw,
+    modals
+)
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 
@@ -99,7 +102,14 @@ def gui(state):
         )
         if dataset_file is not None:
             state.dataset_file = dataset_file
-            state.dataset
+            state.dataset # trigger the dataset loading?
+
+        # Modal to warn on exit
+        # it still quits after the dataset is saved
+        # if state.app_shall_exit:
+            # state.dataset.save()
+            # state.app_shall_exit = not state.dataset.dirty
+            # .warn_on_exit(state)
     except Exception as e:
         import traceback
 
@@ -129,9 +139,12 @@ def main():
         return update()
 
     state = State(dataset_file=args.data)
+    runner_params = immapp.RunnerParams()
 
     def run_gui():
+        state.app_shall_exit = runner_params.app_shall_exit
         gui(state)
+        runner_params.app_shall_exit = state.app_shall_exit
 
     def callback_load_font():
         io = imgui.get_io()
@@ -142,11 +155,14 @@ def main():
             io.fonts.get_glyph_ranges_vietnamese(),
         )
 
-    runner_params = immapp.RunnerParams()
+    def on_exit():
+        import sys
+        sys.exit(0)
+
     runner_params.callbacks.load_additional_fonts = callback_load_font
     runner_params.callbacks.show_gui = run_gui
+    runner_params.callbacks.before_exit = on_exit
     # runner_params.callbacks.show_menus = lambda: draw_menu_bar(state)
-
     # runner_params.imgui_window_params.default_imgui_window_type = imgui.Def
     # runner_params.imgui_window_params.show_menu_bar = True
     # runner_params.imgui_window_params.enable_viewports = True

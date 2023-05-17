@@ -95,6 +95,7 @@ class Dataset(BaseModel):
         assert isinstance(node_idx, int) and node_idx < len(sample.texts)
         return sample.classes.get(node_idx, None)
 
+    @mutating
     def set_text_class(self, node_idx: int, class_idx: int):
         sample = self.get_current_sample()
         assert isinstance(node_idx, int) and node_idx < len(sample.texts)
