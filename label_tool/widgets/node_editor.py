@@ -45,10 +45,12 @@ class Node:
         ed.end_pin()
 
         imgui.same_line()
+        imgui.begin_group()
         if class_name is not None:
-            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), f"[{class_name}]")
-            imgui.same_line()
+            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), f"{class_name[0].upper()}")
+        imgui.same_line()
         imgui.text(self.text)
+        imgui.end_group()
 
         imgui.same_line()
         ed.begin_pin(self.out_pin, ed.PinKind.output)

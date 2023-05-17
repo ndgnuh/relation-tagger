@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import *
 from imgui_bundle import imgui
 from .states import requires
+from copy import copy
 
 
 @dataclass
@@ -30,7 +31,10 @@ class Shortcut:
     def on_frame(cls, state):
         io = imgui.get_io()
         for shortcut in cls.shortcuts:
-            if ((io.key_mods & shortcut.mod) or (shortcut.mod == imgui.Key.im_gui_mod_none)) and imgui.is_key_pressed(shortcut.key):
+            if (
+                (io.key_mods & shortcut.mod)
+                or (shortcut.mod == imgui.Key.im_gui_mod_none)
+            ) and imgui.is_key_pressed(shortcut.key):
                 shortcut.callback(state)
                 return
 
@@ -52,6 +56,29 @@ def save(state):
 def save(state):
     state.dataset.previous_data()
 
+
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.tab)
 def toggle_im_preview(state):
     state.toggle_show_image_preview()
+
+
+# Because python fucking leaks the loop index
+class SetNodeClass:
+    def __init__(self, idx):
+        self.idx = idx
+
+    def __call__(self, state):
+        if state.dataset is None:
+            return
+        data = state.dataset
+        ned = state.node_editor
+
+        selections = ned.get_node_selections()
+        for node in selections:
+            data.set_text_class(node.id, self.idx - 1)
+
+
+for idx in range(10):
+    key = getattr(imgui.Key, f"_{idx}")
+    Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=key)(SetNodeClass(idx))
+    del idx
