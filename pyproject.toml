@@ -1,6 +1,6 @@
 [project]
 name = "relation-tagger"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
 	"imgui-bundle",
 	"pydantic",
