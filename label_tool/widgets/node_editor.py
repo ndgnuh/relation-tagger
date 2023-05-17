@@ -50,7 +50,8 @@ class Node:
         imgui.same_line()
         imgui.begin_group()
         if class_name is not None:
-            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), f"{class_name[0].upper()}")
+            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1),
+                               f"{class_name[0].upper()}")
         imgui.same_line()
         imgui.text(self.text)
         imgui.end_group()
@@ -253,6 +254,8 @@ previous_cache_key = None
 
 
 def node_editor(state: State):
+    if state.dataset is None:
+        return
     global previous_cache_key
     this_cache_key = get_cache_key(state)
     if this_cache_key != previous_cache_key or state.node_editor_reinit:

@@ -51,7 +51,7 @@ def image_preview_static(static, image_base64, size):
     if static["image"] is None or image_base64 != static["previous_b64"]:
         image = BytesIO(b64decode(image_base64))
         image = Image.open(image)
-        image.thumbnail((640, 640)) # Lags
+        image.thumbnail((640, 640))  # Lags
         image = np.array(image)
         static["image"] = image
         static["previous_b64"] = image_base64
@@ -73,19 +73,26 @@ def image_preview(state: State):
 
     sample: Sample = state.dataset.get_current_sample()
     if sample.image_base64 is not None:
-        size = imgui.get_window_size()
-        image, params = image_preview_static(sample.image_base64, size)
-        immvision.image("## preview", image, params)
+        try:
+            size = imgui.get_window_size()
+            image, params = image_preview_static(sample.image_base64, size)
+            immvision.image("## preview", image, params)
+        except Exception:
+            imgui.text("Something went wrong, cannot load the preview image")
     else:
-        imgui.text("No image found in this sample, follow the instruction to enable image preview")
+        imgui.text(
+            "No image found in this sample, follow the instruction to enable image preview")
         imgui.bullet_text("Load the data")
         imgui.bullet_text("For each sample, read the corresponding image")
         imgui.bullet_text("Save the image to a byte buffer")
         imgui.bullet_text("Convert the byte buffer to base64 encoded string")
-        imgui.bullet_text("Store the encoded image string as `image_base64` in the sample")
+        imgui.bullet_text(
+            "Store the encoded image string as `image_base64` in the sample")
 
         imgui.spacing()
-        imgui.text("For more information, see `data.py` in the source code for data schema")
+        imgui.text(
+            "For more information, see `data.py` in the source code for data schema")
+
 
 @requires("dataset")
 def sample_navigator(state):
@@ -110,7 +117,8 @@ def sample_navigator(state):
     imgui.bullet()
     imgui.begin_group()
     imgui.text("Jump to sample")
-    changed, value = imgui.input_int("##jump-to-sample-idx", data.idx + 1, step=1, step_fast=5)
+    changed, value = imgui.input_int(
+        "##jump-to-sample-idx", data.idx + 1, step=1, step_fast=5)
     if changed:
         data.jump_to(value - 1)
     imgui.end_group()
@@ -148,13 +156,13 @@ def node_navigator(state):
     selected_idx = 0 if selected_idx is None else selected_idx + 1
     imgui.text("Node class:")
     imgui.same_line()
-    imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), selection_list[selected_idx])
-    changed, selected_idx = imgui.list_box("##node-class", selected_idx, selection_list)
+    imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1),
+                       selection_list[selected_idx])
+    changed, selected_idx = imgui.list_box(
+        "##node-class", selected_idx, selection_list)
     if changed:
         class_idx = selected_idx - 1
         data.set_text_class(node_id, class_idx)
     imgui.end_group()
     imgui.bullet()
     imgui.menu_item("Split node", "", False, True)
-
-
