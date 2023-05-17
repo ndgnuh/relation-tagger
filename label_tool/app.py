@@ -57,6 +57,12 @@ def gui(state):
         if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
             state.toggle_show_image_preview()
 
+        imgui.bullet()
+        if imgui.menu_item("Debug", "", False, True)[0]:
+            if imgui.begin_popup("Debug", imgui.WindowFlags_.popup):
+                imgui.text("Hello")
+            imgui.end_popup()
+
         # End left panel
         left_panel_with = imgui.get_window_width()
         left_panel_height = imgui.get_window_height()
@@ -106,10 +112,8 @@ def gui(state):
 
         # Modal to warn on exit
         # it still quits after the dataset is saved
-        # if state.app_shall_exit:
-            # state.dataset.save()
-            # state.app_shall_exit = not state.dataset.dirty
-            # .warn_on_exit(state)
+        if state.app_wants_exit:
+            state.app_is_runnning = modals.warn_on_exit(state)
     except Exception as e:
         import traceback
 
@@ -142,9 +146,9 @@ def main():
     runner_params = immapp.RunnerParams()
 
     def run_gui():
-        state.app_shall_exit = runner_params.app_shall_exit
+        state.app_wants_exit = runner_params.app_shall_exit
         gui(state)
-        runner_params.app_shall_exit = state.app_shall_exit
+        runner_params.app_shall_exit = not state.app_is_runnning
 
     def callback_load_font():
         io = imgui.get_io()
@@ -166,8 +170,8 @@ def main():
     # runner_params.imgui_window_params.default_imgui_window_type = imgui.Def
     # runner_params.imgui_window_params.show_menu_bar = True
     # runner_params.imgui_window_params.enable_viewports = True
-
     add_ons_params = immapp.AddOnsParams(with_node_editor=True, with_markdown=True)
+    
     immapp.run(runner_params, add_ons_params)
 
 

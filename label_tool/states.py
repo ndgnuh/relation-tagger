@@ -53,7 +53,8 @@ class State:
     dataset_file: Optional[str] = None
     previous: Optional = None
 
-    app_shall_exit: bool = False
+    app_wants_exit: bool = False
+    app_is_runnning: bool = True
     show_image_preview: bool = True
 
     def toggle_show_image_preview(self):
