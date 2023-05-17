@@ -123,8 +123,14 @@ class Dataset(BaseModel):
 
     @mutating
     def delete_current_sample(self):
-        self.samples.pop(self.idx)
-        self.next_data(0)
+        idx = self.idx
+        self.samples.pop(idx)
+
+        # When deleting and the popup does not change, the node editor does not reload
+        # This is hacky: TODO
+        self.next_data()
+        self.previous_data()
+        self.jump_to(idx)
 
     def save(self):
         data = self.dict(exclude={"path", "dirty", "idx"})
