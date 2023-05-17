@@ -81,6 +81,10 @@ class Dataset(BaseModel):
         idx = min(idx, len(self.samples) - 1)
         self.idx = idx
 
+    def jump_to(self, idx):
+        idx = min(idx, len(self.samples) - 1)
+        self.idx = idx
+
     def previous_data(self, delta=1):
         idx = self.idx - delta
         idx = max(idx, 0)
@@ -98,6 +102,11 @@ class Dataset(BaseModel):
     def add_edge(self, i, j):
         sample = self.get_current_sample()
         sample.links.add((i, j))
+
+    @mutating
+    def delete_current_sample(self):
+        self.samples.pop(self.idx)
+        self.next_data(0)
 
     def save(self):
         data = self.dict(exclude={"path", "dirty", "idx"})

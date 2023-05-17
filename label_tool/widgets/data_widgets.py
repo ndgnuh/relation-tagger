@@ -99,3 +99,36 @@ def image_preview(state: State):
         imgui.spacing()
         imgui.text("For more information, see `data.py` in the source code for data schema")
     imgui.end()
+
+@requires("dataset")
+def sample_navigator(state):
+    data: Dataset = state.dataset
+
+    # Render
+    imgui.separator()
+    imgui.text_disabled("Sample")
+    imgui.separator()
+
+    # Previous
+    imgui.bullet()
+    if imgui.menu_item("Previous sample", "A", False, True)[0]:
+        data.previous_data()
+
+    # Next
+    imgui.bullet()
+    if imgui.menu_item("Next sample", "D", False, True)[0]:
+        data.next_data()
+
+    # Jump
+    imgui.bullet()
+    imgui.begin_group()
+    imgui.text("Jump to sample")
+    changed, value = imgui.input_int("##jump-to-sample-idx", data.idx + 1, step=1, step_fast=5)
+    if changed:
+        data.jump_to(value - 1)
+    imgui.end_group()
+
+    # Delete
+    imgui.bullet()
+    if imgui.menu_item("Delete sample", "", False, True)[0]:
+        data.delete_current_sample()
