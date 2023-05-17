@@ -120,7 +120,7 @@ def gui(state):
 def update():
     from subprocess import run
 
-    remote = "https://github.com/ndgnuh/spade-label-tool"
+    remote = "https://github.com/ndgnuh/relation-tagger"
     ref = ""
     # ref = "@92ad8964504909be753a4bd771854cec1c853515"
     run(["pip", "install", f"git+{remote}{ref}"])
