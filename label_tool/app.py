@@ -28,8 +28,10 @@ def gui(state):
         #
         # Left panel
         #
+        imgui.begin_group()
+
+        # First window, with toolbox and stuffs
         imgui.set_next_window_pos(imgui.ImVec2(0, menubar_events.menubar_height))
-        # imgui.set_next_window_size(imgui.ImVec2(root_width * 0.2, 0))
         imgui.begin(
             name="Tools",
             flags = imgui.WindowFlags_.no_collapse
@@ -54,10 +56,21 @@ def gui(state):
 
         # End left panel
         left_panel_with = imgui.get_window_width()
+        left_panel_height = imgui.get_window_height()
         imgui.end()
+
+        # Image preview window
+        imgui.set_next_window_pos(imgui.ImVec2(0, left_panel_height + 20))
+        imgui.set_next_window_size(imgui.ImVec2(left_panel_with, root_height - left_panel_height - 20))
+        imgui.begin(name="Preview image",
+                    flags=imgui.WindowFlags_.no_title_bar and imgui.WindowFlags_.no_move and imgui.WindowFlags_.no_decoration)
+        dw.image_preview(state)
+        imgui.end()
+        imgui.end_group()
 
         #
         # Main panel
+        # This one only have a node editor
         #
         imgui.set_next_window_pos(
             imgui.ImVec2(left_panel_with, menubar_events.menubar_height)
@@ -68,21 +81,12 @@ def gui(state):
             name="Workspace",
             flags=imgui.WindowFlags_.no_scrollbar and imgui.WindowFlags_.no_collapse
         )
-
-        #
-        # Data widgets
-        #
         if state.node_editor is not None:
             imgui.same_line()
-            # Node editor
             state.node_editor.on_frame()
-
-        # Class selector
-        dw.label_selector(state)
-        # Image preview
-        dw.image_preview(state)
-
+        # End second panel
         imgui.end()
+
 
         # handle shortcut
         Shortcut.on_frame(state)

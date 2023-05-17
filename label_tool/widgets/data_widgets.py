@@ -74,7 +74,7 @@ def image_preview_static(static, image_base64, size):
     # Because size is float
     w, h = size
     params = immvision.ImageParams()
-    params.image_display_size = (int(w * 0.7), int(h * 0.7))
+    params.image_display_size = (int(w * 1), int(h * 0.8))
 
     return image, params
 
@@ -84,7 +84,6 @@ def image_preview(state: State):
     if not state.show_image_preview:
         return
 
-    imgui.begin("Preview")
     sample: Sample = state.dataset.get_current_sample()
     if sample.image_base64 is not None:
         size = imgui.get_window_size()
@@ -100,7 +99,6 @@ def image_preview(state: State):
 
         imgui.spacing()
         imgui.text("For more information, see `data.py` in the source code for data schema")
-    imgui.end()
 
 @requires("dataset")
 def sample_navigator(state):

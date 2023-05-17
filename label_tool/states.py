@@ -53,7 +53,7 @@ class State:
     dataset_file: Optional[str] = None
     previous: Optional = None
 
-    show_image_preview: bool = False
+    show_image_preview: bool = True
 
     def toggle_show_image_preview(self):
         self.show_image_preview = not self.show_image_preview
