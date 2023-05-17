@@ -50,7 +50,7 @@ class Dataset(BaseModel):
     idx: PositiveInt = 0
 
     def __hash__(self):
-        return hash((id(self), self.idx))
+        return hash((id(self), self.idx, len(self.samples)))
 
     def __len__(self):
         return len(self.samples)
@@ -126,11 +126,6 @@ class Dataset(BaseModel):
     def delete_current_sample(self):
         idx = self.idx
         self.samples.pop(idx)
-
-        # When deleting and the popup does not change, the node editor does not reload
-        # This is hacky: TODO
-        self.next_data()
-        self.previous_data()
         self.jump_to(idx)
 
     def save(self):
