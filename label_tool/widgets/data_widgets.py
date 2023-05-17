@@ -117,7 +117,7 @@ def sample_navigator(state):
 
     # Delete
     imgui.bullet()
-    if imgui.menu_item("Delete sample", "", False, True)[0]:
+    if imgui.menu_item("Delete sample", "", False, len(data.samples) > 1)[0]:
         data.delete_current_sample()
 
 

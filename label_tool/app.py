@@ -143,7 +143,8 @@ def main():
     if args.update:
         return update()
 
-    state = State(dataset_file=args.data)
+    state = State()
+    state.dataset_file = args.data
     runner_params = immapp.RunnerParams()
 
     def run_gui():
