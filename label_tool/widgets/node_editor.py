@@ -185,7 +185,9 @@ def node_editor_init_links(state):
 
 
 def node_editor_init(state):
-    print("init")
+    # import logging
+    # logging.getLogger().setLevel(logging.DEBUG)
+    # logging.debug("init")
     data = state.dataset
     sample = data.get_current_sample()
     texts = sample.texts

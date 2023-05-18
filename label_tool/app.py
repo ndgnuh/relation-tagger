@@ -16,6 +16,7 @@ from .widgets import (
 )
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
+from label_tool.widgets.cmd import command_palette
 
 thisdir = path.dirname(__file__)
 
@@ -60,8 +61,7 @@ def gui(state):
         imgui.bullet()
         if imgui.menu_item("Debug", "", False, True)[0]:
             pass
-        # from label_tool.widgets.cmd import command_palette
-        # command_palette(state)
+        command_palette(state)
 
 
         # End left panel

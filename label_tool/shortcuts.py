@@ -36,6 +36,8 @@ class Shortcut:
 
     @classmethod
     def on_frame(cls, state):
+        if not state.app_shortcuts_enabled:
+            return
         io = imgui.get_io()
         for shortcut in cls.shortcuts:
             if cls.check(shortcut.mod, shortcut.key, io):

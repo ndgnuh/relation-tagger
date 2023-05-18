@@ -150,13 +150,11 @@ def node_navigator(state):
     # Check if any node selected
     # Multiple node
     selections = state.node_editor_selections
-    if len(selections) > 1:
-        imgui.text("Multiple node selection is not supported")
-        return
-    elif len(selections) == 0:
+    if len(selections) == 0:
         imgui.text("Select a node")
         return
 
+    # Class label selection
     node_id = selections[0].id
     imgui.bullet()
     imgui.begin_group()
@@ -170,8 +168,14 @@ def node_navigator(state):
     changed, selected_idx = imgui.list_box(
         "##node-class", selected_idx, selection_list)
     if changed:
-        class_idx = selected_idx - 1
-        data.set_text_class(node_id, class_idx)
+        for node in selections:
+            class_idx = selected_idx - 1
+            data.set_text_class(node.id, class_idx)
     imgui.end_group()
+
+    # Class label command pallete
+    imgui.bullet()
+    if imgui.menu_item("Select class (cmd)", "C", False, True)[0]:
+        state.command_palette_show = True
     imgui.bullet()
     imgui.menu_item("Split node", "", False, True)

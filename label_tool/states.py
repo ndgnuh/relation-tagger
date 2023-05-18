@@ -35,6 +35,7 @@ class State:
     app_is_runnning: bool = True
     app_wants_save_data: bool = False
     app_menubar_height: int = 10
+    app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
     show_data_picker: bool = False
 
