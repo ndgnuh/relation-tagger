@@ -7,6 +7,7 @@ from typing import *
 
 from .data import Dataset
 from .utils import reactive_class, reactive, requires
+from .events import Event
 
 
 def errorable(**restore_states):
@@ -30,28 +31,32 @@ def errorable(**restore_states):
 @dataclass
 class State:
     error: Optional[str] = None
-    dataset_file: Optional[str] = None
     previous: Optional = None
 
     # node editor states
     node_editor_nodes: Optional[List] = field(default_factory=list)
     node_editor_links: Optional[List] = field(default_factory=list)
     node_editor_selections: Optional[List] = field(default_factory=list)
-    node_editor_add_links: bool = False
-    node_editor_remove_links: bool = False
-    node_editor_reinit: bool = False
     node_editor_num_class_initials: int = 1
-    node_editor_copy_text: bool = False
+
+    node_editor_add_links: Event = Event()
+    node_editor_remove_links: Event = Event()
+    node_editor_reinit: Event = Event()
+    node_editor_copy_text: Event = Event()
 
     # Command palette states
-    command_palette_show: bool = False
-    command_palette_options: Optional[List] = None
-    command_palette_selected_idx: Optional[int] = None
+    command_palette_show: Event = Event()
+    command_palette_options: Event = Event()
+    command_palette_selected_idx: Event = Event()
 
-    # inferable
+    # dataset states
     dataset: Optional[Dataset] = None
+    dataset_file: Optional[str] = None
+    dataset_pick_file: Event[bool] = Event()
+    dataset_save_file: Event[str] = Event()
+    dataset_ask_delete_sample: Event = Event()
+    dataset_delete_sample: Event = Event()
 
-    app_wants_delete_sample: bool = False
     app_wants_exit: bool = False
     app_is_runnning: bool = True
     app_wants_save_data: bool = False
@@ -74,6 +79,7 @@ class State:
             for k, v in resolve_states.items():
                 setattr(self, k, v)
             self.error = None
+
         self.error = msg
         self.resolve_error = resolve
 
@@ -87,3 +93,21 @@ def dataset(self, dataset_file):
         data = json.load(fp)
         data["path"] = dataset_file
     self.dataset = Dataset.from_dict(data)
+
+
+def loop_on(ev_name):
+    """
+    Loop on an event with early return
+    """
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(state, *args, **kwargs):
+            event = getattr(state, ev_name)
+            if event:
+                result = f(state, *args, **kwargs)
+                if result:
+                    event.set()
+
+        return wrapped
+
+    return wrapper

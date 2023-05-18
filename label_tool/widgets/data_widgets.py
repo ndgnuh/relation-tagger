@@ -126,17 +126,16 @@ def sample_navigator(state):
     # Delete
     imgui.bullet()
     if imgui.menu_item("Delete sample", "", False, len(data.samples) > 1)[0]:
-        print("delete")
-        state.app_wants_delete_sample = True
+        state.dataset_ask_delete_sample()
 
     # Add and remove links
     multiple_selected = len(state.node_editor_selections) > 1
     imgui.bullet()
     if imgui.menu_item("Add links", "S", False, multiple_selected)[0]:
-        state.node_editor_add_links = True
+        state.node_editor_add_links()
     imgui.bullet()
     if imgui.menu_item("Remove links", "R", False, multiple_selected)[0]:
-        state.node_editor_remove_links = True
+        state.node_editor_remove_links()
 
 
 @requires("dataset")

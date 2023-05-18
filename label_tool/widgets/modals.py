@@ -1,6 +1,6 @@
 import traceback
 from imgui_bundle import imgui
-from ..states import State
+from ..states import State, loop_on
 
 flags = imgui.WindowFlags_.no_move and imgui.WindowFlags_.no_collapse
 red = imgui.ImVec4(1, 0.5, 0.5, 1)
@@ -44,26 +44,35 @@ def warn_on_exit(state: State):
     return running
 
 
+@loop_on("dataset_ask_delete_sample")
 def warn_on_delete_sample(state: State):
-    if not state.app_wants_delete_sample:
-        return
+    _set_next_window_notification()
 
     imgui.begin("Warning", flags=flags)
-    _set_window_notification()
+    # Warn text
     imgui.text("Delete this sample? ")
     imgui.same_line()
     imgui.text_colored(red, "This action cannot be undone")
 
+    # if button clicked
+    cont = True
+
+    # Yes delete
     imgui.spacing()
     imgui.push_style_color(0, red)
     if imgui.button("Yes"):
-        state.app_wants_delete_sample = False
-        state.dataset.delete_current_sample()
+        state.dataset_delete_sample()
+        cont = False
     imgui.pop_style_color()
+
+    # No dont delete
     imgui.same_line()
     if imgui.button("No"):
-        state.app_wants_delete_sample = False
+        cont = False
     imgui.end()
+
+    # If continue event
+    return cont
 
 
 def show_errors(state: State):
@@ -77,10 +86,9 @@ def show_errors(state: State):
     imgui.text_colored(red, state.error)
     if imgui.button("OK"):
         state.resolve_error()
+        cont = False
 
     imgui.same_line()
     if imgui.button("Copy"):
         imgui.set_clipboard_text(state.error)
     imgui.end()
-
-    print(state.dataset_file)
