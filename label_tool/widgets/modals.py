@@ -1,6 +1,7 @@
 import traceback
 from imgui_bundle import imgui
 from ..states import State, loop_on
+from .. import utils
 from .wrapper import button
 
 flags = imgui.WindowFlags_.no_move and imgui.WindowFlags_.no_collapse
@@ -86,6 +87,27 @@ def dataset_ask_export_file_confirm(state: State):
     if not action:
         event()
 
+
+@utils.static
+def info_app_processing(static, state: State):
+    if state.app_is_processing is None:
+        static['count'] = 0
+        return
+
+    static['count'] = static.get('count', 0) + 1
+    static['count'] = static['count'] % 1000
+    static['dot_count'] = static.get('dot_count', 0)
+
+    if static['count'] % 6 == 0:
+        static['dot_count'] = static.get('dot_count', 0) + 1
+        static['dot_count'] = static.get('dot_count', 0) % 5
+
+    _set_next_window_notification()
+    imgui.begin("Please wait", flags=flags)
+    imgui.text(state.app_is_processing + "." * (static['dot_count'] + 1))
+    imgui.end()
+
+
 def show_errors(state: State):
     if state.error is None:
         return
@@ -110,3 +132,4 @@ def handle(state: State):
     warn_on_exit(state)
     warn_on_delete_sample(state)
     dataset_ask_export_file_confirm(state)
+    info_app_processing(state)

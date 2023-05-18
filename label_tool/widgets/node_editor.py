@@ -209,6 +209,7 @@ def node_editor_init(state):
         link = Link(k, nodes[i], nodes[j])
         links.append(link)
 
+    node_editor_deselect(state)
     state.node_editor_nodes = nodes
     state.node_editor_links = links
 

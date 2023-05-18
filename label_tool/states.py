@@ -4,6 +4,7 @@ import traceback
 from dataclasses import dataclass, field
 from functools import lru_cache, wraps
 from typing import *
+from threading import Thread
 
 from .data import Dataset
 from .utils import reactive_class, reactive, requires
@@ -77,6 +78,7 @@ class State:
 
     # App state
     app_is_runnning: bool = True
+    app_is_processing: Optional[str] = None
     app_menubar_height: int = 10
     app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
@@ -84,13 +86,27 @@ class State:
     app_function_not_implemented: Event = Event()
     app_ask_exit: Event = Event()
 
+    def _process(self, message, function, *args, **kwargs):
+        def callback():
+            self.app_is_processing = message
+            function(*args, **kwargs)
+            self.app_is_processing = None
+
+        Thread(target=callback).start()
+
+    def _load_data(self):
+        self.dataset = Dataset.from_file(self.dataset_pick_file.value)
+
+    def _export_data(self):
+        self.dataset.save_minified(self.dataset_export_file.value)
+
     def handle(self):
         # TODO: sugar coat this thing, add a mapping table or something like that
         if self.dataset_save_file:
-            self.dataset.save()
+            self._process("Saving dataset", self.dataset.save)
 
         if self.dataset_pick_file:
-            self.dataset = Dataset.from_file(self.dataset_pick_file.value)
+            self._process("Loading dataset", self._load_data)
 
         if self.dataset_previous:
             self.dataset and self.dataset.previous_data()
@@ -107,9 +123,8 @@ class State:
         if self.dataset_delete_sample:
             self.dataset and self.dataset.delete_current_sample()
 
-        if (event := self.dataset_export_file):
-            self.dataset.save_minified(event.value)
-
+        if self.dataset_export_file:
+            self._process("Exporting dataset", self._export_data)
 
     def resolve_error(self):
         raise RuntimeError("We are supposed to override this function in runtime???")
