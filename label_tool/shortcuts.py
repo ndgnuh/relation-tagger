@@ -44,6 +44,7 @@ class Shortcut(Generic[T]):
 for idx in range(10):
     key = getattr(imgui.Key, f"_{idx}")
     Shortcut(Key.im_gui_mod_none, key, "dataset_ask_assign_class", value=idx - 1)
+    Shortcut(Key.im_gui_mod_ctrl, key, "dataset_ask_assign_class", value=idx - 1 + 10)
 
 Shortcut(Key.im_gui_mod_none, Key.d, "dataset_next")
 Shortcut(Key.im_gui_mod_none, Key.a, "dataset_previous")
