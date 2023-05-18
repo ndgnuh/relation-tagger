@@ -73,13 +73,13 @@ class State:
     dataset_toggle_preview: Event = Event()
 
     # App state
-    app_wants_exit: bool = False
     app_is_runnning: bool = True
     app_menubar_height: int = 10
     app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
     show_data_picker: bool = False
     app_function_not_implemented: Event = Event()
+    app_ask_exit: Event = Event()
 
     def handle(self):
         # TODO: sugar coat this thing, add a mapping table or something like that

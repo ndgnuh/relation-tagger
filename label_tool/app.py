@@ -115,13 +115,10 @@ def gui(state):
         # Conditional widgets/popups
         # Modal to warn on exit
         # it still quits after the dataset is saved
-        if state.app_wants_exit:
-            state.app_is_runnning = modals.warn_on_exit(state)
 
 
         filepicker.handle(state)
-        modals.warn_on_delete_sample(state)
-        modals.show_errors(state)
+        modals.handle(state)
         state.handle()
     except Exception as e:
         import traceback
@@ -156,7 +153,8 @@ def main():
     runner_params = immapp.RunnerParams()
 
     def run_gui():
-        state.app_wants_exit = runner_params.app_shall_exit
+        if runner_params.app_shall_exit:
+            state.app_ask_exit()
         gui(state)
         runner_params.app_shall_exit = not state.app_is_runnning
 

@@ -22,26 +22,25 @@ def _set_window_notification():
     imgui.set_window_focus()
 
 
+@loop_on("app_ask_exit")
 def warn_on_exit(state: State):
-    if state.dataset is None:
-        return False
+    if state.dataset is None or not state.dataset.dirty:
+        state.app_is_runnning = False
+        return
 
-    if not state.dataset.dirty:
-        return False
-
-    running = True
     _set_next_window_notification()
     imgui.begin("Warning", flags=flags)
     imgui.text("There current dataset is not saved, what to do?")
     imgui.separator()
     if imgui.button("Save and quit"):
-        state.dataset.save()
-        running = False
+        state.dataset_save_file()
+        state.app_is_runnning = False
     if imgui.button("Discard and quit"):
-        running = False
-    imgui.end()
+        state.app_is_runnning = False
 
-    return running
+    imgui.end()
+    return state.app_is_runnning
+
 
 
 @loop_on("dataset_ask_delete_sample")
@@ -92,3 +91,9 @@ def show_errors(state: State):
     if imgui.button("Copy"):
         imgui.set_clipboard_text(state.error)
     imgui.end()
+
+
+def handle(state: State):
+    show_errors(state)
+    warn_on_exit(state)
+    warn_on_delete_sample(state)

@@ -128,9 +128,9 @@ def sample_navigator(state):
     # Add and remove links
     multiple_selected = len(state.node_editor_selections) > 1
     imgui.bullet()
-    menu_item("Add links", state.node_editor_add_links, "S")
+    menu_item("Add links", state.node_editor_add_links, "S", enabled=multiple_selected)
     imgui.bullet()
-    menu_item("Remove links", state.node_editor_remove_links, "R")
+    menu_item("Remove links", state.node_editor_remove_links, "R", enabled=multiple_selected)
 
 
 @requires("dataset")
