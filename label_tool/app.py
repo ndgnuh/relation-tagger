@@ -133,6 +133,8 @@ def gui(state):
         if state.app_wants_save_data:
             state.data.save()
             state.app_wants_save_data = False
+
+        modals.warn_on_delete_sample(state)
     except Exception as e:
         import traceback
 

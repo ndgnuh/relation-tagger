@@ -32,6 +32,7 @@ class State:
     # inferable
     dataset: Optional[Dataset] = None
 
+    app_wants_delete_sample: bool = False
     app_wants_exit: bool = False
     app_is_runnning: bool = True
     app_wants_save_data: bool = False

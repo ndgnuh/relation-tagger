@@ -126,7 +126,8 @@ def sample_navigator(state):
     # Delete
     imgui.bullet()
     if imgui.menu_item("Delete sample", "", False, len(data.samples) > 1)[0]:
-        data.delete_current_sample()
+        print("delete")
+        state.app_wants_delete_sample = True
 
     # Add and remove links
     multiple_selected = len(state.node_editor_selections) > 1

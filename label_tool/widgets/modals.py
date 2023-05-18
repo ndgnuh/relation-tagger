@@ -2,6 +2,21 @@ from imgui_bundle import imgui
 from ..states import State
 
 
+def _set_next_window_notification():
+    w, h = imgui.get_main_viewport().size
+    pos_size = imgui.ImVec2(w/3, h/3)
+    imgui.set_next_window_size(pos_size)
+    imgui.set_next_window_pos(pos_size)
+    imgui.set_next_window_focus()
+
+def _set_window_notification():
+    w, h = imgui.get_main_viewport().size
+    pos_size = imgui.ImVec2(w/3, h/3)
+    imgui.set_window_size(pos_size)
+    imgui.set_window_pos(pos_size)
+    imgui.set_window_focus()
+
+
 def warn_on_exit(state: State):
     if state.dataset is None:
         return False
@@ -21,3 +36,26 @@ def warn_on_exit(state: State):
     imgui.end()
 
     return running
+
+
+def warn_on_delete_sample(state: State):
+    if not state.app_wants_delete_sample:
+        return
+    red = imgui.ImVec4(1, 0.5, 0.5, 1)
+
+    imgui.begin("Warning", flags=imgui.WindowFlags_.no_move and imgui.WindowFlags_.no_collapse)
+    _set_window_notification()
+    imgui.text("Delete this sample? ")
+    imgui.same_line()
+    imgui.text_colored(red, "This action cannot be undone")
+
+    imgui.spacing()
+    imgui.push_style_color(0, red)
+    if imgui.button("Yes"):
+        state.app_wants_delete_sample = False
+        state.dataset.delete_current_sample()
+    imgui.pop_style_color()
+    imgui.same_line()
+    if imgui.button("No"):
+        state.app_wants_delete_sample = False
+    imgui.end()
