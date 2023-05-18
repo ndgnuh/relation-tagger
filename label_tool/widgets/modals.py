@@ -1,25 +1,21 @@
 import traceback
 from imgui_bundle import imgui
 from ..states import State, loop_on
+from .wrapper import button
 
 flags = imgui.WindowFlags_.no_move and imgui.WindowFlags_.no_collapse
 red = imgui.ImVec4(1, 0.5, 0.5, 1)
 
 
 def _set_next_window_notification():
-    w, h = imgui.get_main_viewport().size
-    pos_size = imgui.ImVec2(w / 3, h / 3)
-    imgui.set_next_window_size(pos_size)
-    imgui.set_next_window_pos(pos_size)
+    rw, rh = imgui.get_main_viewport().size
+    x = rw / 5
+    y = rh / 5
+    w = rw - x - x
+    h = rh - y - y
+    imgui.set_next_window_size(imgui.ImVec2(w, h))
+    imgui.set_next_window_pos(imgui.ImVec2(x, y))
     imgui.set_next_window_focus()
-
-
-def _set_window_notification():
-    w, h = imgui.get_main_viewport().size
-    pos_size = imgui.ImVec2(w / 3, h / 3)
-    imgui.set_window_size(pos_size)
-    imgui.set_window_pos(pos_size)
-    imgui.set_window_focus()
 
 
 @loop_on("app_ask_exit")
@@ -40,7 +36,6 @@ def warn_on_exit(state: State):
 
     imgui.end()
     return state.app_is_runnning
-
 
 
 @loop_on("dataset_ask_delete_sample")
@@ -74,6 +69,23 @@ def warn_on_delete_sample(state: State):
     return cont
 
 
+def dataset_ask_export_file_confirm(state: State):
+    event = state.dataset_ask_export_file_confirm
+    if not event:
+        return
+
+    action = False
+
+    _set_next_window_notification()
+    imgui.begin("Export file", flags=flags)
+    imgui.text_colored(red, "File exists, overwrite?")
+    action = action or button("Ok", state.dataset_export_file, value=event.value)
+    action = action or imgui.button("Cancel")
+    imgui.end()
+
+    if not action:
+        event()
+
 def show_errors(state: State):
     if state.error is None:
         return
@@ -97,3 +109,4 @@ def handle(state: State):
     show_errors(state)
     warn_on_exit(state)
     warn_on_delete_sample(state)
+    dataset_ask_export_file_confirm(state)

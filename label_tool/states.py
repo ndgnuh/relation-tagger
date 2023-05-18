@@ -17,7 +17,7 @@ class Event(Generic[T]):
     value: Optional[T] = None
 
     def set(self, value: T = None):
-        self.value = value
+        self.value = value or self.value
         self.trigger = True
         return self
 
@@ -65,6 +65,9 @@ class State:
     dataset_ask_pick_file: Event[bool] = Event()
     dataset_pick_file: Event[bool] = Event()
     dataset_save_file: Event[str] = Event()
+    dataset_export_file: Event[str] = Event()
+    dataset_ask_export_file: Event[bool] = Event()
+    dataset_ask_export_file_confirm: Event[bool] = Event()
     dataset_ask_delete_sample: Event = Event()
     dataset_delete_sample: Event = Event()
     dataset_next: Event = Event()
@@ -103,6 +106,10 @@ class State:
 
         if self.dataset_delete_sample:
             self.dataset and self.dataset.delete_current_sample()
+
+        if (event := self.dataset_export_file):
+            self.dataset.save_minified(event.value)
+
 
     def resolve_error(self):
         raise RuntimeError("We are supposed to override this function in runtime???")
