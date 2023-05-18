@@ -49,7 +49,10 @@ def command_palette_init(static, state: State):
     commands = []
     for idx, class_name in enumerate(["(none)"] + state.dataset.classes):
         cmd = imcmd.Command()
-        cmd.name = class_name
+        if idx == 0:
+            cmd.name = class_name
+        else:
+            cmd.name = f'{idx:02d}. {class_name}'
         cmd.initial_callback = Callback(idx - 1)
         imcmd.add_command(cmd)
         commands.append(cmd)
@@ -73,4 +76,5 @@ def command_palette(state: State):
     command_palette_init(state)
 
     state.app_shortcuts_enabled = False
+    imcmd.set_next_command_palette_search("")
     state.command_palette_show = imcmd.command_palette_window("CommandPalette", True)
