@@ -92,13 +92,16 @@ for idx in range(10):
 def class_selector(state):
     state.show_data_picker = True
 
+
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.s)
 def ned_add_links(state):
     state.node_editor_add_links = True
 
+
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.r)
 def ned_del_links(state: State):
     state.node_editor_remove_links = True
+
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.c)
 def cmd_plt_show(state: State):

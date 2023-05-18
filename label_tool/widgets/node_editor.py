@@ -265,6 +265,7 @@ def node_editor(state: State):
     global previous_cache_key
     this_cache_key = get_cache_key(state)
     if this_cache_key != previous_cache_key or state.node_editor_reinit:
+        print("Reinit")
         node_editor_init(state)
         state.node_editor_reinit = False
     previous_cache_key = this_cache_key

@@ -58,8 +58,12 @@ def gui(state):
         if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
             state.toggle_show_image_preview()
 
-        # Number of node editor initials
+        # Node editor node positions
         imgui.bullet()
+        if imgui.menu_item("Reset node editor positions", "", False, True)[0]:
+            state.node_editor_reinit = True
+
+        # Number of node editor initials
         imgui.bullet()
         imgui.begin_group()
         imgui.text("Number of class initials to display")
