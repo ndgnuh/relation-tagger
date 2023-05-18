@@ -32,6 +32,7 @@ def dataset_export_picker(state):
 
     if state.dataset_ask_export_file:
         fd.save(picker_id, title, description)
+        state.app_shortcuts_enabled = False
 
     if fd.is_done(picker_id):
         if fd.has_result():
@@ -41,6 +42,7 @@ def dataset_export_picker(state):
             else:
                 state.dataset_export_file(selected_file)
         fd.close()
+        state.app_shortcuts_enabled = True
 
 
 def handle(state):
