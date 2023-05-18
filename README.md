@@ -11,16 +11,23 @@ pip install "git+https://github.com/ndgnuh/relation-tagger"
 Start
 ```bash
 relation-tagger
+relation-tagger run
 ```
 
 Start with a dataset
 ```bash
-relation-tagger --data data.json
+relation-tagger run --data data.json
 ```
 
 Update
 ```bash
-relation-tagger --udate
+relation-tagger update
+relation-tagger update --ref <git commit>
+```
+
+Create data
+```bash
+relation-tagger create --o dataset.json sample1.json sample2.json -c 'class1,class2,class3'
 ```
 
 ## Shortcuts
