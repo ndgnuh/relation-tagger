@@ -9,6 +9,7 @@ from imgui_bundle import imgui, immapp, imgui_md, immvision
 from ..states import requires, State
 from ..data import Dataset, Sample
 from .. import utils
+from .wrapper import menu_item
 from .node_editor import NodeEditor, node_editor_get_selected_nodes
 
 
@@ -104,13 +105,11 @@ def sample_navigator(state):
 
     # Previous
     imgui.bullet()
-    if imgui.menu_item("Previous sample", "A", False, True)[0]:
-        state.dataset_previous()
+    menu_item("Previous sample", state.dataset_previous, "A")
 
     # Next
     imgui.bullet()
-    if imgui.menu_item("Next sample", "D", False, True)[0]:
-        state.dataset_next()
+    menu_item("Next sample", state.dataset_next, "D")
 
     # Jump
     imgui.bullet()
@@ -124,17 +123,14 @@ def sample_navigator(state):
 
     # Delete
     imgui.bullet()
-    if imgui.menu_item("Delete sample", "", False, len(data.samples) > 1)[0]:
-        state.dataset_ask_delete_sample()
+    menu_item("Delete sample", state.dataset_ask_delete_sample, "")
 
     # Add and remove links
     multiple_selected = len(state.node_editor_selections) > 1
     imgui.bullet()
-    if imgui.menu_item("Add links", "S", False, multiple_selected)[0]:
-        state.node_editor_add_links()
+    menu_item("Add links", state.node_editor_add_links, "S")
     imgui.bullet()
-    if imgui.menu_item("Remove links", "R", False, multiple_selected)[0]:
-        state.node_editor_remove_links()
+    menu_item("Remove links", state.node_editor_remove_links, "R")
 
 
 @requires("dataset")
@@ -155,8 +151,7 @@ def node_navigator(state):
 
     # Copy text
     imgui.bullet()
-    if imgui.menu_item("Copy text(s)", "Ctrl+C", False, len(selections) > 0)[0]:
-        state.node_editor_copy_text()
+    menu_item("Copy text(s)",state.node_editor_copy_text, "Ctrl+C")
 
     # Class label selection
     node_id = selections[0].id
@@ -179,7 +174,6 @@ def node_navigator(state):
 
     # Class label command pallete
     imgui.bullet()
-    if imgui.menu_item("Select class (cmd)", "C", False, True)[0]:
-        state.command_palette_show()
+    menu_item("Select class (cmd)", state.command_palette_show, "C")
     imgui.bullet()
-    imgui.menu_item("Split node", "", False, True)
+    menu_item("Split node", state.app_function_not_implemented, "")

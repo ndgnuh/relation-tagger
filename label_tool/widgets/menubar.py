@@ -1,6 +1,7 @@
 from imgui_bundle import imgui, immapp
 from dataclasses import dataclass
 from .data_widgets import datastatus
+from .wrapper import menu_item
 
 @dataclass
 class MenuBarResult:
@@ -16,10 +17,8 @@ def draw_menu_bar(state):
 
         # File menu
         if imgui.begin_menu('File', True):
-            if imgui.menu_item('Import', 'Ctrl+O', False, True)[0]:
-                state.dataset_ask_pick_file()
-            if imgui.menu_item('Save', 'Ctrl+S', False, True)[0]:
-                state.dataset_save_file()
+            menu_item('Import', state.dataset_ask_pick_file, 'Ctrl+O')
+            menu_item('Save', state.dataset_save_file, 'Ctrl+S')
             imgui.end_menu()
 
         # Datastatus

@@ -69,15 +69,17 @@ class State:
     dataset_delete_sample: Event = Event()
     dataset_next: Event = Event()
     dataset_previous: Event = Event()
-    dataset_jump: Event = Event()
+    dataset_jump_to: Event = Event()
     dataset_toggle_preview: Event = Event()
 
+    # App state
     app_wants_exit: bool = False
     app_is_runnning: bool = True
     app_menubar_height: int = 10
     app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
     show_data_picker: bool = False
+    app_function_not_implemented: Event = Event()
 
     def handle(self):
         # TODO: sugar coat this thing, add a mapping table or something like that
@@ -90,6 +92,9 @@ class State:
         if self.dataset_previous:
             self.dataset and self.dataset.previous_data()
 
+        if self.dataset_jump_to:
+            self.dataset and self.dataset.jump_to(self.dataset_jump_to.value)
+
         if self.dataset_next:
             self.dataset and self.dataset.next_data()
 
@@ -98,15 +103,6 @@ class State:
 
         if self.dataset_delete_sample:
             self.dataset and self.dataset.delete_current_sample()
-
-        # Guard if any event is NOT handled
-        # unhandled = []
-        # for k, v in vars(self).items():
-        #     if isinstance(v, Event):
-        #         if v:
-        #             unhandled.append(v)
-        # print(unhandled)
-        # assert len(unhandled) == 0
 
     def resolve_error(self):
         raise RuntimeError("We are supposed to override this function in runtime???")

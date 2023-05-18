@@ -14,6 +14,7 @@ from .widgets import (
     modals,
     filepicker
 )
+from .widgets.wrapper import menu_item
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 from label_tool.widgets.cmd import command_palette
@@ -51,17 +52,15 @@ def gui(state):
         imgui.separator()
         imgui.bullet()
         imgui.begin_group()
-        imgui.menu_item("Show shortcuts", "Ctrl+/", False, True)
+        menu_item("Show shortcuts", state.app_function_not_implemented, "Ctrl+/")
         imgui.text_wrapped("(This functionality is not implemented)")
         imgui.end_group()
         imgui.bullet()
-        if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
-            state.dataset_toggle_preview()
+        menu_item("Toggle thumbnail", state.dataset_toggle_preview, "Tab")
 
         # Node editor node positions
         imgui.bullet()
-        if imgui.menu_item("Reset node editor positions", "", False, True)[0]:
-            state.node_editor_reinit()
+        menu_item("Reset node editor positions", state.node_editor_reinit, "")
 
         # Number of node editor initials
         imgui.bullet()
@@ -75,8 +74,7 @@ def gui(state):
         imgui.end_group()
 
         imgui.bullet()
-        if imgui.menu_item("Debug", "", False, True)[0]:
-            pass
+        menu_item("Debug", state.app_function_not_implemented, "")
         command_palette(state)
 
 
