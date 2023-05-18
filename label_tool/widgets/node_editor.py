@@ -268,8 +268,13 @@ def node_editor(state: State):
     #
     ed.begin("Editor")
     # Draw nodes
+    class_names = state.dataset.classes
     for node in state.node_editor_nodes:
-        node.draw()
+        class_idx = state.dataset.get_text_class(node.id)
+        if class_idx is None:
+            node.draw()
+        else:
+            node.draw(class_names[class_idx])
     # Draw links
     for link in state.node_editor_links:
         link.draw()
@@ -282,3 +287,6 @@ def node_editor(state: State):
         node_editor_add_links(state)
     if state.node_editor_remove_links:
         node_editor_remove_links(state)
+
+    # Update state
+    state.node_editor_selections = node_editor_get_selected_nodes(state)

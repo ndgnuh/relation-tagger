@@ -9,7 +9,7 @@ from imgui_bundle import imgui, immapp, imgui_md, immvision
 from ..states import requires, State
 from ..data import Dataset, Sample
 from .. import utils
-from .node_editor import NodeEditor
+from .node_editor import NodeEditor, node_editor_get_selected_nodes
 
 
 @requires(["dataset_file", "dataset"])

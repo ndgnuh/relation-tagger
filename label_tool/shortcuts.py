@@ -75,10 +75,8 @@ class SetNodeClass:
         if state.dataset is None:
             return
         data = state.dataset
-        ned = state.node_editor
 
-        selections = ned.get_node_selections()
-        for node in selections:
+        for node in state.node_editor_selections:
             data.set_text_class(node.id, self.idx - 1)
 
 
