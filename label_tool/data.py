@@ -2,6 +2,7 @@ import numpy as np
 import json
 from typing import *
 from functools import wraps
+from copy import deepcopy
 from pydantic import BaseModel, Field, PositiveInt
 
 
@@ -136,6 +137,17 @@ class Dataset(BaseModel):
         with open(self.path, "w", encoding="utf-8") as f:
             f.write(data_str)
         self.dirty = False
+
+    def minify(self):
+        copied = deepcopy(self)
+        for sample in copied.samples:
+            sample.image_base64 = None
+        return copied
+
+    def save_minified(self, path):
+        data = self.minify()
+        data.path = path
+        data.save()
 
 
 if __name__ == "__main__":
