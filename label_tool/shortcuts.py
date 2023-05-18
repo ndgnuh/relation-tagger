@@ -41,29 +41,9 @@ class Shortcut(Generic[T]):
                 event(shortcut.value)
                 return
 
-
-# Because python fucking leaks the loop index
-class SetNodeClass:
-    def __init__(self, idx):
-        self.idx = idx
-
-    def __call__(self, state):
-        if state.dataset is None:
-            return
-        data = state.dataset
-
-        for node in state.node_editor_selections:
-            data.set_text_class(node.id, self.idx - 1)
-
-
-# for idx in range(10):
-#     key = getattr(imgui.Key, f"_{idx}")
-#     Shortcut(mod=imgui.Key.im_gui_mod_none, key=key)(SetNodeClass(idx))
-#     del idx
-
-
-
-
+for idx in range(10):
+    key = getattr(imgui.Key, f"_{idx}")
+    Shortcut(Key.im_gui_mod_none, key, "dataset_ask_assign_class", value=idx - 1)
 
 Shortcut(Key.im_gui_mod_none, Key.d, "dataset_next")
 Shortcut(Key.im_gui_mod_none, Key.a, "dataset_previous")

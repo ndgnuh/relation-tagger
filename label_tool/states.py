@@ -18,7 +18,7 @@ class Event(Generic[T]):
     value: Optional[T] = None
 
     def set(self, value: T = None):
-        self.value = value or self.value
+        self.value = self.value if value is None else value
         self.trigger = True
         return self
 
@@ -70,6 +70,7 @@ class State:
     dataset_ask_import_file: Event[bool] = Event()
     dataset_ask_export_file: Event[bool] = Event()
     dataset_ask_export_file_confirm: Event[bool] = Event()
+    dataset_ask_assign_class: Event[int] = Event()
     dataset_ask_delete_sample: Event = Event()
     dataset_delete_sample: Event = Event()
     dataset_next: Event = Event()
@@ -109,6 +110,12 @@ class State:
 
         if self.dataset_pick_file:
             self._process("Loading dataset", self._load_data)
+
+        if self.dataset_ask_assign_class:
+            class_idx = self.dataset_ask_assign_class.value
+            print(class_idx, self.dataset_ask_assign_class)
+            for node in self.node_editor_selections:
+                self.dataset.set_text_class(node.id, class_idx)
 
         if self.dataset_previous:
             self.dataset and self.dataset.previous_data()
