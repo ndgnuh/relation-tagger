@@ -71,6 +71,7 @@ Shortcut(Key.im_gui_mod_none, Key.tab, "dataset_toggle_preview")
 Shortcut(Key.im_gui_mod_ctrl, Key.o, "dataset_ask_pick_file")
 Shortcut(Key.im_gui_mod_ctrl, Key.s, "dataset_save_file")
 Shortcut(Key.im_gui_mod_ctrl, Key.e, "dataset_ask_export_file")
+Shortcut(Key.im_gui_mod_ctrl, Key.i, "app_function_not_implemented")
 
 Shortcut(Key.im_gui_mod_none, Key.s, "node_editor_add_links")
 Shortcut(Key.im_gui_mod_none, Key.r, "node_editor_remove_links")

@@ -63,10 +63,11 @@ class State:
 
     # dataset states
     dataset: Optional[Dataset] = None
-    dataset_ask_pick_file: Event[bool] = Event()
     dataset_pick_file: Event[bool] = Event()
     dataset_save_file: Event[str] = Event()
     dataset_export_file: Event[str] = Event()
+    dataset_ask_pick_file: Event[bool] = Event()
+    dataset_ask_import_file: Event[bool] = Event()
     dataset_ask_export_file: Event[bool] = Event()
     dataset_ask_export_file_confirm: Event[bool] = Event()
     dataset_ask_delete_sample: Event = Event()
@@ -75,6 +76,7 @@ class State:
     dataset_previous: Event = Event()
     dataset_jump_to: Event = Event()
     dataset_toggle_preview: Event = Event()
+    dataset_ask_export_file: Event = Event()
 
     # App state
     app_is_runnning: bool = True

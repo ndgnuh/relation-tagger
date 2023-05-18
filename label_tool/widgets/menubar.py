@@ -17,9 +17,10 @@ def draw_menu_bar(state):
 
         # File menu
         if imgui.begin_menu('File', True):
-            menu_item('Import', state.dataset_ask_pick_file, 'Ctrl+O')
+            menu_item('Open', state.dataset_ask_pick_file, 'Ctrl+O')
             menu_item('Save', state.dataset_save_file, 'Ctrl+S')
             menu_item('Export', state.dataset_ask_export_file, 'Ctrl+E')
+            menu_item('Import', state.app_function_not_implemented, 'Ctrl+I')
             imgui.end_menu()
 
         # Datastatus

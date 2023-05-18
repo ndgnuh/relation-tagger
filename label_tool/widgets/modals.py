@@ -127,9 +127,23 @@ def show_errors(state: State):
     imgui.end()
 
 
+def warn_function_not_implemented(state):
+    if not state.app_function_not_implemented:
+        return
+
+    _set_next_window_notification()
+    imgui.begin("Sorry", flags=flags)
+    imgui.text("This function is not implemented, open an issue at my GitHub")
+    action = imgui.button("OK")
+    imgui.end()
+
+    not action and state.app_function_not_implemented()
+
+
 def handle(state: State):
     show_errors(state)
     warn_on_exit(state)
     warn_on_delete_sample(state)
     dataset_ask_export_file_confirm(state)
     info_app_processing(state)
+    warn_function_not_implemented(state)
