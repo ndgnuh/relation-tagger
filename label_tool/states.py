@@ -1,11 +1,29 @@
 import copy
 import json
+import traceback
 from dataclasses import dataclass, field
 from functools import lru_cache, wraps
 from typing import *
 
 from .data import Dataset
 from .utils import reactive_class, reactive, requires
+
+
+def errorable(**restore_states):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self, *args, **kwargs):
+            try:
+                return f(self, *args, **kwargs)
+            except Exception as e:
+                trace = traceback.format_exc()
+                traceback.print_exc()
+                error = str(e) + "\n" + trace
+                self.throw_error(error, **restore_states)
+
+        return wrapped
+
+    return wrapper
 
 
 @reactive_class
@@ -48,27 +66,23 @@ class State:
         self.previous = copy.copy(self)
 
     def resolve_error(self):
-        for k, v in vars(state.previous).items():
-            setattr(self, k, v)
+        raise RuntimeError("We are supposed to override this function in runtime???")
 
     def throw_error(self, msg, **resolve_states):
         def resolve():
             for k, v in resolve_states.items():
                 setattr(self, k, v)
             self.error = None
-
         self.error = msg
         self.resolve_error = resolve
 
 
 @reactive(State, "dataset_file")
+@errorable(dataset_file=None)
 def dataset(self, dataset_file):
     if dataset_file is None:
         return None
-    try:
-        with open(dataset_file, "r") as fp:
-            data = json.load(fp)
-            data["path"] = dataset_file
-        self.dataset = Dataset.from_dict(data)
-    except Exception as e:
-        self.throw_error(str(e), dataset_file=None)
+    with open(dataset_file, "r") as fp:
+        data = json.load(fp)
+        data["path"] = dataset_file
+    self.dataset = Dataset.from_dict(data)

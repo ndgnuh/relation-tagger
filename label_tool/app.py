@@ -135,11 +135,13 @@ def gui(state):
             state.app_wants_save_data = False
 
         modals.warn_on_delete_sample(state)
+        modals.show_errors(state)
+        print(state.dataset_file)
     except Exception as e:
         import traceback
-
+        trace = traceback.format_exc()
         traceback.print_exc()
-        state.error = str(e)
+        state.error = str(e) + "\n" + trace
 
 
 def update():
