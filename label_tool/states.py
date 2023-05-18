@@ -41,6 +41,7 @@ class State:
     node_editor_remove_links: bool = False
     node_editor_reinit: bool = False
     node_editor_num_class_initials: int = 1
+    node_editor_copy_text: bool = False
 
     # Command palette states
     command_palette_show: bool = False

@@ -30,7 +30,8 @@ def warn_on_exit(state: State):
         return False
 
     running = True
-    imgui.begin("Warning")
+    _set_next_window_notification()
+    imgui.begin("Warning", flags=flags)
     imgui.text("There current dataset is not saved, what to do?")
     imgui.separator()
     if imgui.button("Save and quit"):

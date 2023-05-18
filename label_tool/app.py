@@ -136,7 +136,6 @@ def gui(state):
 
         modals.warn_on_delete_sample(state)
         modals.show_errors(state)
-        print(state.dataset_file)
     except Exception as e:
         import traceback
         trace = traceback.format_exc()

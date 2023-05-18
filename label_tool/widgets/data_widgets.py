@@ -155,6 +155,11 @@ def node_navigator(state):
         imgui.text("Select a node")
         return
 
+    # Copy text
+    imgui.bullet()
+    if imgui.menu_item("Copy text(s)", "Ctrl+C", False, len(selections) > 0)[0]:
+        state.node_editor_copy_text = True
+
     # Class label selection
     node_id = selections[0].id
     imgui.bullet()

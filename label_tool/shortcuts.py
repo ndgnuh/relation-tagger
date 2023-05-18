@@ -103,6 +103,11 @@ def ned_del_links(state: State):
     state.node_editor_remove_links = True
 
 
+@Shortcut.register(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.c)
+def ned_copy_text(state: State):
+    state.node_editor_copy_text = True
+
+
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.c)
 def cmd_plt_show(state: State):
     state.command_palette_show = True

@@ -297,6 +297,10 @@ def node_editor(state: State):
         node_editor_add_links(state)
     if state.node_editor_remove_links:
         node_editor_remove_links(state)
+    if state.node_editor_copy_text:
+        texts = [node.text for node in node_editor_get_selected_nodes(state)]
+        imgui.set_clipboard_text(" ".join(texts))
+        state.node_editor_copy_text = False
 
     # Update state
     state.node_editor_selections = node_editor_get_selected_nodes(state)
