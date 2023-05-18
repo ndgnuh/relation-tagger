@@ -29,6 +29,7 @@ class Shortcut(Generic[T]):
         if mod == Key.im_gui_mod_none:
             return imgui.is_key_pressed(key) and io.key_mods == 0
         else:
+            mod = Key(mod)
             return imgui.is_key_pressed(mod) and imgui.is_key_pressed(key)
 
     @classmethod
