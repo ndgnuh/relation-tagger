@@ -26,9 +26,10 @@ class Shortcut(Generic[T]):
     @classmethod
     def check(cls, mod, key, io=None):
         io = imgui.get_io()
-        return (
-            (io.key_mods & mod) or (mod == imgui.Key.im_gui_mod_none)
-        ) and imgui.is_key_pressed(key)
+        if mod == Key.im_gui_mod_none:
+            return imgui.is_key_pressed(key) and io.key_mods == 0
+        else:
+            return imgui.is_key_pressed(mod) and imgui.is_key_pressed(key)
 
     @classmethod
     def on_frame(cls, state):
@@ -44,7 +45,7 @@ class Shortcut(Generic[T]):
 for idx in range(10):
     key = getattr(imgui.Key, f"_{idx}")
     Shortcut(Key.im_gui_mod_none, key, "dataset_ask_assign_class", value=idx - 1)
-    Shortcut(Key.im_gui_mod_ctrl, key, "dataset_ask_assign_class", value=idx - 1 + 10)
+    Shortcut(Key.im_gui_mod_ctrl, key, "dataset_ask_assign_class", value=idx + 10)
 
 Shortcut(Key.im_gui_mod_none, Key.d, "dataset_next")
 Shortcut(Key.im_gui_mod_none, Key.a, "dataset_previous")
