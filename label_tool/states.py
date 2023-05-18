@@ -51,7 +51,7 @@ class State:
 
     # dataset states
     dataset: Optional[Dataset] = None
-    dataset_file: Optional[str] = None
+    dataset_ask_pick_file: Event[bool] = Event()
     dataset_pick_file: Event[bool] = Event()
     dataset_save_file: Event[str] = Event()
     dataset_ask_delete_sample: Event = Event()
@@ -59,11 +59,17 @@ class State:
 
     app_wants_exit: bool = False
     app_is_runnning: bool = True
-    app_wants_save_data: bool = False
     app_menubar_height: int = 10
     app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
     show_data_picker: bool = False
+
+    def handle(self):
+        if self.dataset_save_file:
+            self.dataset.save()
+
+        if self.dataset_pick_file:
+            self.dataset = Dataset.from_file(self.dataset_pick_file.value)
 
     def toggle_show_image_preview(self):
         self.show_image_preview = not self.show_image_preview
@@ -99,6 +105,7 @@ def loop_on(ev_name):
     """
     Loop on an event with early return
     """
+
     def wrapper(f):
         @wraps(f)
         def wrapped(state, *args, **kwargs):

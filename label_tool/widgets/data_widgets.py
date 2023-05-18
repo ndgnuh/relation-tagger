@@ -12,15 +12,14 @@ from .. import utils
 from .node_editor import NodeEditor, node_editor_get_selected_nodes
 
 
-@requires(["dataset_file", "dataset"])
+@requires(["dataset"])
 def datastatus(state: State):
     dataset = state.dataset
-    dataset_file = state.dataset_file
 
     messages = [
         "Data:",
         "*" if dataset.dirty else "",
-        f"[{1 + dataset.idx}/{len(dataset)}] {dataset_file}",
+        f"[{1 + dataset.idx}/{len(dataset)}] {dataset.path}",
     ]
     for message in messages:
         imgui.same_line()

@@ -4,7 +4,6 @@ from itertools import product
 from dataclasses import dataclass
 from imgui_bundle import imgui, immapp, hello_imgui
 from imgui_bundle import im_file_dialog as fd
-from .widgets.filepicker import pick_open_file
 from .states import State
 from .widgets.node_editor import NodeEditor, node_editor
 from .widgets import filepicker
@@ -12,7 +11,8 @@ from .widgets.dirty_indicator import dirty_indicator, save_button
 from .widgets.data_widgets import label_selector
 from .widgets import (
     data_widgets as dw,
-    modals
+    modals,
+    filepicker
 )
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
@@ -119,23 +119,16 @@ def gui(state):
         Shortcut.on_frame(state)
 
         # Conditional widgets/popups
-        # Must be drawn last
-        dataset_file = filepicker.pick_open_file(state)
-        if dataset_file is not None:
-            state.dataset_file = dataset_file
-            state.dataset # trigger the dataset loading?
-
         # Modal to warn on exit
         # it still quits after the dataset is saved
         if state.app_wants_exit:
             state.app_is_runnning = modals.warn_on_exit(state)
 
-        if state.app_wants_save_data:
-            state.data.save()
-            state.app_wants_save_data = False
 
+        filepicker.handle(state)
         modals.warn_on_delete_sample(state)
         modals.show_errors(state)
+        state.handle()
     except Exception as e:
         import traceback
         trace = traceback.format_exc()

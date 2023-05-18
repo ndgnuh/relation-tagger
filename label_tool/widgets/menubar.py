@@ -17,9 +17,9 @@ def draw_menu_bar(state):
         # File menu
         if imgui.begin_menu('File', True):
             if imgui.menu_item('Import', 'Ctrl+O', False, True)[0]:
-                state.show_data_picker = True
+                state.dataset_ask_pick_file()
             if imgui.menu_item('Save', 'Ctrl+S', False, True)[0]:
-                state.app_wants_save_data = True
+                state.dataset_save_file()
             imgui.end_menu()
 
         # Datastatus

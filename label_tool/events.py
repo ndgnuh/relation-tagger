@@ -33,6 +33,13 @@ class Event(Generic[T]):
         return self.check()[0]
 
 
+def menu_item(label, event, shortcut='', enabled=True):
+    from imgui_bundle import imgui
+    assert isinstance(event, Event)
+    if imgui.menu_item(label, shortcut, False, enabled)[0]:
+        event()
+
+
 if __name__ == "__main__":
     event = Event()
     if event:

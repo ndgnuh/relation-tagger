@@ -90,17 +90,17 @@ for idx in range(10):
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.o)
 def class_selector(state):
-    state.show_data_picker = True
+    state.dataset_ask_pick_file()
 
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.s)
 def ned_add_links(state):
-    state.node_editor_add_links = True
+    state.node_editor_add_links()
 
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.r)
 def ned_del_links(state: State):
-    state.node_editor_remove_links = True
+    state.node_editor_remove_links()
 
 
 @Shortcut.register(mod=imgui.Key.im_gui_mod_ctrl, key=imgui.Key.c)

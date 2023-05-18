@@ -3,17 +3,22 @@ from imgui_bundle import im_file_dialog
 
 fd = im_file_dialog.FileDialog.instance()
 
-def pick_open_file(state, title="Open a file", description="Open a file"):
-    selected_file = None
-    picker_id = f"file-picker"
+def dataset_open_picker(state):
+    picker_id = 'dataset_open_picker'
+    title = "Open"
+    description = "Dataset file (*.json)"
 
-    if state.show_data_picker:
+    # Open picker
+    if state.dataset_ask_pick_file:
         fd.open(picker_id, title, description, True)
-        state.show_data_picker = False
 
+    # Check result
     if fd.is_done(picker_id):
         if fd.has_result():
             selected_file = fd.get_results()[0].path()
+            state.dataset_pick_file(selected_file)
         fd.close()
 
-    return selected_file
+
+def handle(state):
+    dataset_open_picker(state)

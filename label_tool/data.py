@@ -129,6 +129,15 @@ class Dataset(BaseModel):
         self.samples.pop(idx)
         self.jump_to(idx)
 
+    @classmethod
+    def from_file(cls, file: str):
+        if file is None:
+            return
+        with open(file, encoding="utf-8") as f:
+            data = json.load(f)
+        data["path"] = file
+        return Dataset.from_dict(data)
+
     def save(self):
         data = self.dict(exclude={"path", "dirty", "idx"})
         data_str = json.dumps(
