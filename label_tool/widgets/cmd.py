@@ -11,7 +11,7 @@ from imgui_bundle import (
 )
 from imgui_bundle import imgui_command_palette as imcmd
 from .. import shortcuts, utils
-from ..states import State
+from ..states import State, loop_on
 
 
 def _render_cache_key(state):
@@ -67,9 +67,9 @@ def command_palette_init(static, state: State):
     static['commands'] = commands
 
 
+@loop_on("command_palette_show")
 def command_palette(state: State):
-    if not state.command_palette_show or not state.dataset:
-        state.app_shortcuts_enabled = True
+    if not state.dataset:
         return
 
     # Init
@@ -77,4 +77,6 @@ def command_palette(state: State):
 
     state.app_shortcuts_enabled = False
     imcmd.set_next_command_palette_search("")
-    state.command_palette_show = imcmd.command_palette_window("CommandPalette", True)
+    continue_ = imcmd.command_palette_window("CommandPalette", True)
+    state.app_shortcuts_enabled = not continue_
+    return continue_

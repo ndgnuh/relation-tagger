@@ -172,7 +172,7 @@ class NodeEditor:
 def get_cache_key(state: State):
     if state.dataset is None:
         return -1
-    key = (state.dataset_file, state.dataset.idx, len(state.dataset.samples))
+    key = (state.dataset.path, state.dataset.idx, len(state.dataset.samples))
 
     return hash(key)
 
@@ -241,7 +241,6 @@ def node_editor_add_links(state: State):
         state.dataset.add_edge(i, j)
     node_editor_init_links(state)
     node_editor_deselect(state)
-    state.node_editor_add_links = False
 
 
 def node_editor_remove_links(state: State):
@@ -253,7 +252,6 @@ def node_editor_remove_links(state: State):
         state.dataset.remove_edge(i, j)
     node_editor_init_links(state)
     node_editor_deselect(state)
-    state.node_editor_remove_links = False
 
 
 previous_cache_key = None
@@ -267,7 +265,6 @@ def node_editor(state: State):
     if this_cache_key != previous_cache_key or state.node_editor_reinit:
         print("Reinit")
         node_editor_init(state)
-        state.node_editor_reinit = False
     previous_cache_key = this_cache_key
 
     #
@@ -300,7 +297,7 @@ def node_editor(state: State):
     if state.node_editor_copy_text:
         texts = [node.text for node in node_editor_get_selected_nodes(state)]
         imgui.set_clipboard_text(" ".join(texts))
-        state.node_editor_copy_text = False
+        node_editor_deselect(state)
 
     # Update state
     state.node_editor_selections = node_editor_get_selected_nodes(state)

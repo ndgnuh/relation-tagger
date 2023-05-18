@@ -56,12 +56,12 @@ def gui(state):
         imgui.end_group()
         imgui.bullet()
         if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
-            state.toggle_show_image_preview()
+            state.dataset_toggle_preview()
 
         # Node editor node positions
         imgui.bullet()
         if imgui.menu_item("Reset node editor positions", "", False, True)[0]:
-            state.node_editor_reinit = True
+            state.node_editor_reinit()
 
         # Number of node editor initials
         imgui.bullet()
@@ -108,10 +108,6 @@ def gui(state):
             flags=imgui.WindowFlags_.no_scrollbar and imgui.WindowFlags_.no_collapse
         )
         node_editor(state)
-        # if state.node_editor is not None:
-        #     imgui.same_line()
-        #     state.node_editor.on_frame()
-        # End second panel
         imgui.end()
 
 
@@ -158,7 +154,7 @@ def main():
         return update()
 
     state = State()
-    state.dataset_file = args.data
+    state.dataset_pick_file(args.data)
     runner_params = immapp.RunnerParams()
 
     def run_gui():
@@ -184,8 +180,6 @@ def main():
     runner_params.callbacks.before_exit = on_exit
     # runner_params.callbacks.show_menus = lambda: draw_menu_bar(state)
     # runner_params.imgui_window_params.default_imgui_window_type = imgui.Def
-    # runner_params.imgui_window_params.show_menu_bar = True
-    # runner_params.imgui_window_params.enable_viewports = True
     add_ons_params = immapp.AddOnsParams(with_node_editor=True, with_markdown=True)
     
     immapp.run(runner_params, add_ons_params)

@@ -56,6 +56,10 @@ class State:
     dataset_save_file: Event[str] = Event()
     dataset_ask_delete_sample: Event = Event()
     dataset_delete_sample: Event = Event()
+    dataset_next: Event = Event()
+    dataset_previous: Event = Event()
+    dataset_jump: Event = Event()
+    dataset_toggle_preview: Event = Event()
 
     app_wants_exit: bool = False
     app_is_runnning: bool = True
@@ -65,17 +69,33 @@ class State:
     show_data_picker: bool = False
 
     def handle(self):
+        # TODO: sugar coat this thing, add a mapping table or something like that
         if self.dataset_save_file:
             self.dataset.save()
 
         if self.dataset_pick_file:
             self.dataset = Dataset.from_file(self.dataset_pick_file.value)
 
-    def toggle_show_image_preview(self):
-        self.show_image_preview = not self.show_image_preview
+        if self.dataset_previous:
+            self.dataset and self.dataset.previous_data()
 
-    def checkpoint(self):
-        self.previous = copy.copy(self)
+        if self.dataset_next:
+            self.dataset and self.dataset.next_data()
+
+        if self.dataset_toggle_preview:
+            self.show_image_preview = not self.show_image_preview
+        
+        if self.dataset_delete_sample:
+            self.dataset and self.dataset.delete_current_sample()
+
+        # Guard if any event is NOT handled
+        # unhandled = []
+        # for k, v in vars(self).items():
+        #     if isinstance(v, Event):
+        #         if v:
+        #             unhandled.append(v)
+        # print(unhandled)
+        # assert len(unhandled) == 0
 
     def resolve_error(self):
         raise RuntimeError("We are supposed to override this function in runtime???")
@@ -88,17 +108,6 @@ class State:
 
         self.error = msg
         self.resolve_error = resolve
-
-
-@reactive(State, "dataset_file")
-@errorable(dataset_file=None)
-def dataset(self, dataset_file):
-    if dataset_file is None:
-        return None
-    with open(dataset_file, "r") as fp:
-        data = json.load(fp)
-        data["path"] = dataset_file
-    self.dataset = Dataset.from_dict(data)
 
 
 def loop_on(ev_name):

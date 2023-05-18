@@ -105,12 +105,12 @@ def sample_navigator(state):
     # Previous
     imgui.bullet()
     if imgui.menu_item("Previous sample", "A", False, True)[0]:
-        data.previous_data()
+        state.dataset_previous()
 
     # Next
     imgui.bullet()
     if imgui.menu_item("Next sample", "D", False, True)[0]:
-        data.next_data()
+        state.dataset_next()
 
     # Jump
     imgui.bullet()
@@ -119,7 +119,7 @@ def sample_navigator(state):
     changed, value = imgui.input_int(
         "##jump-to-sample-idx", data.idx + 1, step=1, step_fast=5)
     if changed:
-        data.jump_to(value - 1)
+        state.dataset_jump_to(value - 1)
     imgui.end_group()
 
     # Delete
@@ -156,7 +156,7 @@ def node_navigator(state):
     # Copy text
     imgui.bullet()
     if imgui.menu_item("Copy text(s)", "Ctrl+C", False, len(selections) > 0)[0]:
-        state.node_editor_copy_text = True
+        state.node_editor_copy_text()
 
     # Class label selection
     node_id = selections[0].id
@@ -180,6 +180,6 @@ def node_navigator(state):
     # Class label command pallete
     imgui.bullet()
     if imgui.menu_item("Select class (cmd)", "C", False, True)[0]:
-        state.command_palette_show = True
+        state.command_palette_show()
     imgui.bullet()
     imgui.menu_item("Split node", "", False, True)
