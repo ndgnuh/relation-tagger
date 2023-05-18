@@ -38,7 +38,7 @@ class Node:
     def __hash__(self):
         return hash((self.text, self.x, self.y))
 
-    def draw(self, class_name: Optional[str] = None):
+    def draw(self, class_name: Optional[str] = None, num_initials: int = 1):
         pin_text = " "
         ed.begin_node(self.node_id)
         h = imgui.get_text_line_height()
@@ -50,8 +50,12 @@ class Node:
         imgui.same_line()
         imgui.begin_group()
         if class_name is not None:
-            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1),
-                               f"{class_name[0].upper()}")
+            if num_initials == 0:
+                class_name_str = class_name.title()
+            else:
+                class_name_str = class_name[0:num_initials].title()
+            imgui.text_colored(imgui.ImVec4(0.52, 1, 1, 1), class_name_str)
+
         imgui.same_line()
         imgui.text(self.text)
         imgui.end_group()
@@ -276,7 +280,10 @@ def node_editor(state: State):
         if class_idx is None:
             node.draw()
         else:
-            node.draw(class_names[class_idx])
+            node.draw(
+                class_names[class_idx],
+                num_initials=state.node_editor_num_class_initials,
+            )
     # Draw links
     for link in state.node_editor_links:
         link.draw()

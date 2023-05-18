@@ -22,6 +22,7 @@ class State:
     node_editor_add_links: bool = False
     node_editor_remove_links: bool = False
     node_editor_reinit: bool = False
+    node_editor_num_class_initials: int = 1
 
     # Command palette states
     command_palette_show: bool = False

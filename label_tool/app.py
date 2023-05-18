@@ -44,8 +44,8 @@ def gui(state):
         dw.sample_navigator(state)
         imgui.spacing()
         dw.node_navigator(state)
-
         imgui.spacing()
+
         imgui.separator()
         imgui.text_disabled("Misc")
         imgui.separator()
@@ -57,6 +57,18 @@ def gui(state):
         imgui.bullet()
         if imgui.menu_item("Toggle thumbnail", "Tab", False, True)[0]:
             state.toggle_show_image_preview()
+
+        # Number of node editor initials
+        imgui.bullet()
+        imgui.bullet()
+        imgui.begin_group()
+        imgui.text("Number of class initials to display")
+        _, value = imgui.input_int(
+            "##node-editor-num-class-initials",
+            state.node_editor_num_class_initials,
+        )
+        state.node_editor_num_class_initials = max(value, 0)
+        imgui.end_group()
 
         imgui.bullet()
         if imgui.menu_item("Debug", "", False, True)[0]:
