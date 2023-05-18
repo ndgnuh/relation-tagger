@@ -97,3 +97,7 @@ def ned_add_links(state):
 @Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.r)
 def ned_del_links(state: State):
     state.node_editor_remove_links = True
+
+@Shortcut.register(mod=imgui.Key.im_gui_mod_none, key=imgui.Key.c)
+def cmd_plt_show(state: State):
+    state.command_palette_show = True

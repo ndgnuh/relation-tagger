@@ -23,6 +23,11 @@ class State:
     node_editor_remove_links: bool = False
     node_editor_reinit: bool = False
 
+    # Command palette states
+    command_palette_show: bool = False
+    command_palette_options: Optional[List] = None
+    command_palette_selected_idx: Optional[int] = None
+
     # inferable
     dataset: Optional[Dataset] = None
 

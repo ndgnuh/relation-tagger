@@ -59,9 +59,10 @@ def gui(state):
 
         imgui.bullet()
         if imgui.menu_item("Debug", "", False, True)[0]:
-            if imgui.begin_popup("Debug", imgui.WindowFlags_.popup):
-                imgui.text("Hello")
-            imgui.end_popup()
+            pass
+        # from label_tool.widgets.cmd import command_palette
+        # command_palette(state)
+
 
         # End left panel
         left_panel_with = imgui.get_window_width()
