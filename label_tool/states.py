@@ -7,24 +7,35 @@ from typing import *
 
 from .data import Dataset
 from .utils import reactive_class, reactive, requires
-from .events import Event
+
+T = TypeVar("T")
 
 
-def errorable(**restore_states):
-    def wrapper(f):
-        @wraps(f)
-        def wrapped(self, *args, **kwargs):
-            try:
-                return f(self, *args, **kwargs)
-            except Exception as e:
-                trace = traceback.format_exc()
-                traceback.print_exc()
-                error = str(e) + "\n" + trace
-                self.throw_error(error, **restore_states)
+@dataclass
+class Event(Generic[T]):
+    trigger: bool = False
+    value: Optional[T] = None
 
-        return wrapped
+    def set(self, value: T = None):
+        self.value = value
+        self.trigger = True
+        return self
 
-    return wrapper
+    def get(self):
+        return self.value
+
+    def check(self):
+        ret = (self.trigger, self.value)
+        if self.trigger:
+            self.trigger = False
+        return ret
+
+    # Convenience-s + compat
+    def __call__(self, value=True):
+        return self.set(value)
+
+    def __bool__(self):
+        return self.check()[0]
 
 
 @reactive_class
@@ -84,7 +95,7 @@ class State:
 
         if self.dataset_toggle_preview:
             self.show_image_preview = not self.show_image_preview
-        
+
         if self.dataset_delete_sample:
             self.dataset and self.dataset.delete_current_sample()
 
