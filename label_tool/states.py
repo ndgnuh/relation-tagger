@@ -39,6 +39,10 @@ class Event(Generic[T]):
         return self.check()[0]
 
 
+def EventField():
+    return field(default_factory=Event)
+
+
 @reactive_class
 @dataclass
 class State:
@@ -51,33 +55,33 @@ class State:
     node_editor_selections: Optional[List] = field(default_factory=list)
     node_editor_num_class_initials: int = 1
 
-    node_editor_add_links: Event = Event()
-    node_editor_remove_links: Event = Event()
-    node_editor_reinit: Event = Event()
-    node_editor_copy_text: Event = Event()
+    node_editor_add_links: Event = EventField()
+    node_editor_remove_links: Event = EventField()
+    node_editor_reinit: Event = EventField()
+    node_editor_copy_text: Event = EventField()
 
     # Command palette states
-    command_palette_show: Event = Event()
-    command_palette_options: Event = Event()
-    command_palette_selected_idx: Event = Event()
+    command_palette_show: Event = EventField()
+    command_palette_options: Event = EventField()
+    command_palette_selected_idx: Event = EventField()
 
     # dataset states
     dataset: Optional[Dataset] = None
-    dataset_pick_file: Event[bool] = Event()
-    dataset_save_file: Event[str] = Event()
-    dataset_export_file: Event[str] = Event()
-    dataset_ask_pick_file: Event[bool] = Event()
-    dataset_ask_import_file: Event[bool] = Event()
-    dataset_ask_export_file: Event[bool] = Event()
-    dataset_ask_export_file_confirm: Event[bool] = Event()
-    dataset_ask_assign_class: Event[int] = Event()
-    dataset_ask_delete_sample: Event = Event()
-    dataset_delete_sample: Event = Event()
-    dataset_next: Event = Event()
-    dataset_previous: Event = Event()
-    dataset_jump_to: Event = Event()
-    dataset_toggle_preview: Event = Event()
-    dataset_ask_export_file: Event = Event()
+    dataset_pick_file: Event[bool] = EventField()
+    dataset_save_file: Event[str] = EventField()
+    dataset_export_file: Event[str] = EventField()
+    dataset_ask_pick_file: Event[bool] = EventField()
+    dataset_ask_import_file: Event[bool] = EventField()
+    dataset_ask_export_file: Event[bool] = EventField()
+    dataset_ask_export_file_confirm: Event[bool] = EventField()
+    dataset_ask_assign_class: Event[int] = EventField()
+    dataset_ask_delete_sample: Event = EventField()
+    dataset_delete_sample: Event = EventField()
+    dataset_next: Event = EventField()
+    dataset_previous: Event = EventField()
+    dataset_jump_to: Event = EventField()
+    dataset_toggle_preview: Event = EventField()
+    dataset_ask_export_file: Event = EventField()
 
     # App state
     app_is_runnning: bool = True
@@ -86,8 +90,8 @@ class State:
     app_shortcuts_enabled: bool = True
     show_image_preview: bool = True
     show_data_picker: bool = False
-    app_function_not_implemented: Event = Event()
-    app_ask_exit: Event = Event()
+    app_function_not_implemented: Event = EventField()
+    app_ask_exit: Event = EventField()
 
     def _process(self, message, function, *args, **kwargs):
         def callback():
