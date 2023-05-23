@@ -1,5 +1,5 @@
 import random
-from os import path
+from os import path, environ
 from itertools import product
 from dataclasses import dataclass
 from imgui_bundle import imgui, immapp, hello_imgui
@@ -14,9 +14,9 @@ from .widgets.wrapper import menu_item
 from .widgets.menubar import draw_menu_bar
 from .shortcuts import Shortcut
 from label_tool.widgets.cmd import command_palette
-from icecream import install
-
-install()
+if environ.get("DEBUG", "") != "":
+    from icecream import install
+    install()
 
 thisdir = path.dirname(__file__)
 
